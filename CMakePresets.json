@@ -1,0 +1,26 @@
+{
+    "version": 4,
+    "buildPresets": [
+        {
+            "name": "x64Debug",
+            "configuration": "Debug",
+            "configurePreset": "Ninja Multi"
+        },
+        {
+            "name": "x64Release",
+            "configuration": "Release",
+            "configurePreset": "Ninja Multi"
+        }
+    ],
+    "configurePresets": [
+        {
+            "name": "Ninja Multi",
+            "binaryDir": "${sourceDir}/build",
+            "generator": "Ninja Multi-Config",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER" : "clang",
+                "CMAKE_CXX_COMPILER" : "clang++"
+            }
+        }
+    ]
+}

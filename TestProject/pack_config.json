@@ -1,0 +1,8 @@
+{
+    "input_dir": "F:/Projects/Cpp/ResourceManagement_cxx/Assets",
+    "output_dir_debug": "F:/Projects/Cpp/ResourceManagement_cxx/TestProject/Debug",
+    "output_dir_release": "F:/Projects/Cpp/ResourceManagement_cxx/TestProject/Release",
+    "output_sub_dir": "",
+    "resource_pack_file_name": "resources.pack",
+    "encryption_key" : ""
+}

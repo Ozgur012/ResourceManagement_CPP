@@ -1,0 +1,146 @@
+===========================
+ResourcePacker Testing Plan
+===========================
+
+Author: Engine Dev Team
+Purpose: Validate functionality, argument handling, and log output of ResourcePacker
+Target: Ensure correctness of validation system, logging, and CLI interface
+
+--------------------------
+1. Start Without Arguments
+--------------------------
+Command:
+  ResourcePacker.exe
+
+Expected Behavior:
+  - Prints a message indicating no command was given
+  - Shows help menu with available command-line options
+
+-----------------
+2. Show Help Menu
+-----------------
+Command:
+  ResourcePacker.exe --help
+
+Expected Behavior:
+  - Displays brief usage instructions and available flags
+
+-----------------------
+3. Show Guide to Usage
+-----------------------
+Command:
+  ResourcePacker.exe --guide
+
+Expected Behavior:
+  - Outputs full step-by-step guide on how to use the resource packer
+
+--------------------------------------
+4. Attempt to Pack Without JSON Path
+--------------------------------------
+Command:
+  ResourcePacker.exe --pack
+
+Expected Behavior:
+  - Prints ERROR log:
+      [CONFIG] Missing resource configuration file path.
+  - Shows error log flush with this message
+  - Return code should be non-zero (failure)
+
+-------------------------------------------
+5. Provide Invalid Config (Missing Keys)
+-------------------------------------------
+Create File: `invalid_config.json`
+Contents:
+  {
+    "input_dir": "Assets",
+    "output_dir_debug": "Build/Debug"
+  }
+
+Command:
+  ResourcePacker.exe --pack path/to/invalid_config.json
+
+Expected Behavior:
+  - Logs error messages for each missing key:
+      [VALIDATION] JSON is missing required key: ...
+  - Displays flush of errors with numbered list
+  - Return code should be non-zero
+
+------------------------------------------------
+6. Provide Valid Config But Use Nonexistent Paths
+------------------------------------------------
+Create File: `broken_paths.json`
+Contents:
+  {
+    "input_dir": "nonexistent/folder",
+    "output_dir_debug": "nonexistent/debug",
+    "output_dir_release": "nonexistent/release",
+    "resource_pack_file_name": "resources.resc",
+    "encryption_key": "test_key"
+  }
+
+Command:
+  ResourcePacker.exe --pack path/to/broken_paths.json
+
+Expected Behavior:
+  - JSON validation passes
+  - Logs errors like:
+      [PATH] Directory path in "input_dir" does not exist: ...
+  - Return code should be non-zero
+
+----------------------------
+7. Provide Fully Valid Setup
+----------------------------
+Create folder structure:
+  Assets/
+  Build/Debug/
+  Build/Release/
+
+Create File: `valid_config.json`
+Contents:
+  {
+    "input_dir": "Assets",
+    "output_dir_debug": "Build/Debug",
+    "output_dir_release": "Build/Release",
+    "resource_pack_file_name": "resources.resc",
+    "encryption_key": "test_key"
+  }
+
+Command:
+  ResourcePacker.exe --pack path/to/valid_config.json
+
+Expected Behavior:
+  - Success log output for all validation steps:
+      [VALIDATION] Found required key: ...
+      [PATH] Directory exists: ...
+  - Final message:
+      Validation succeeded. Ready to pack resources...
+  - Return code should be 0
+
+----------------------------
+8. Trigger Unknown Argument
+----------------------------
+Command:
+  ResourcePacker.exe --unknown
+
+Expected Behavior:
+  - Message saying unrecognized command
+  - Help output shown again
+  - Return code should be non-zero
+
+------------------------
+9. Observe Log Formatting
+------------------------
+- All logs must have clear headers:
+    =========RESOURCE_PACKER_SUCCESS_LOG========
+    =========RESOURCE_PACKER_ERROR_LOG==========
+- Each log entry should be numbered and aligned
+- Successful operations must not be silent
+
+----------------------
+Test Completion Status
+----------------------
+- Ensure all cases above are validated
+- Check console output matches expectations
+- Report any unlogged steps or formatting issues
+
+End of Test Instructions

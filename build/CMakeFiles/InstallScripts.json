@@ -1,0 +1,12 @@
+{
+	"Configs" : 
+	[
+		"Debug"
+	],
+	"InstallScripts" : 
+	[
+		"F:/Projects/Cpp/ResourceManagement_cxx/build/cmake_install.cmake",
+		"F:/Projects/Cpp/ResourceManagement_cxx/build/ResourcePacker/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

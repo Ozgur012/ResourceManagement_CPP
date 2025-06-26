@@ -1,0 +1,62 @@
+Packed Resource File Format
+---------------------------
+
+This file is a binary container for storing multiple game assets (e.g., images,
+audio, data) in a single file for efficient access and distribution.
+
+The file is composed of two major sections:
+
+1. File Table (Text)
+   A plain-text index at the beginning of the file that describes the contents
+   and layout of each packed asset. This includes each asset's name, offset, 
+   and size.
+
+2. Resource Data (Binary)
+   The raw binary content of each asset, stored sequentially. Assets are stored
+   back-to-back in the order listed in the file table.
+
+Pack File Layout:
+-----------------
+[ File Table (UTF-8 Text) ]
+[ Separator (Optional newline or null) ]
+[ Binary Data Block (raw asset data) ]
+
+The File Table is read first to locate the position of each asset within the 
+Binary Data Block. Each entry includes the name size, entry name, offset, and 
+size.
+
+The file is designed for simple parsing, fast lookups, and flexible integration
+into game engines or asset loaders.
+
+
+File Table Format Specification
+-------------------------------
+
+The File Table is a plain-text index used to describe the layout of assets
+within the packed resource file. Each line corresponds to a single resource
+entry and provides enough information to locate and read the asset.
+
+Format (per line):
+<NameSize> <EntryName> <Offset> <Size>
+
+Fields:
+- NameSize: The number of characters in EntryName. This is checked first
+            during lookups to avoid unnecessary string comparisons.
+- EntryName: The logical name of the asset (e.g., player.png). Used as the
+             unique key for lookup.
+- Offset: The byte offset in the binary pack file where the asset starts.
+- Size: The number of bytes the asset occupies in the pack file.
+
+Example:
+11 player.png 0 32768
+15 enemy_goblin.png 32768 16384
+20 background_music.ogg 49152 128000
+
+Lookup Strategy:
+1. Compare NameSize with the size of the query.
+2. If sizes match, compare the EntryName string.
+3. On match, use Offset and Size to read the asset from the pack file.
+
+Note:
+- Original disk paths are not stored in the file table.
+- This format is optimized for fast runtime lookups.
