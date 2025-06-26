@@ -1,9 +1,0 @@
-{
-  "revision": 0,
-  "rules": [
-    {
-      "primary-output": "ResourcePacker\\CMakeFiles\\ResourcePacker.dir\\Debug\\src\\validator.cpp.obj"
-    }
-  ],
-  "version": 1
-}

@@ -1,9 +1,0 @@
-{
-  "revision": 0,
-  "rules": [
-    {
-      "primary-output": "ResourcePacker\\CMakeFiles\\ResourcePacker.dir\\Debug\\src\\error_checker_utils.cpp.obj"
-    }
-  ],
-  "version": 1
-}
