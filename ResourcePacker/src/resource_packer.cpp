@@ -4,6 +4,8 @@
 #include "command_line_interface.hpp"
 #include "pack_maker.hpp"
 
+#include "resource_loader.hpp"
+
 #define ENTRY_NAME_LENGTH_FIELD_SIZE 1      // 1 byte to store the length of the asset's name (0–255)
 #define ENTRY_NAME_MAX_LENGTH        256    // Maximum number of characters in the asset name
 #define ENTRY_OFFSET_FIELD_SIZE      4      // 4 bytes to store the offset of the asset data
@@ -47,6 +49,8 @@ int main(int argc, char* argv[])
 
         ResourceManagement::ErrorChecker::Utils::_log_success(ResourceManagement::ErrorChecker::SuccessTypes::VALIDATION, "Validation succeeded. Ready to pack resources..." );
         ResourceManagement::PackMaker::make_resource_pack(config_path);
+
+        
         return 0;
     }
 

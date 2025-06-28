@@ -14,3 +14,4 @@ add_executable(${PROJECT_NAME}
     src/resource_packer.cpp
 )
 target_include_directories(${PROJECT_NAME} PRIVATE _internal)
+target_link_libraries(${PROJECT_NAME} PRIVATE ResourceLoader)

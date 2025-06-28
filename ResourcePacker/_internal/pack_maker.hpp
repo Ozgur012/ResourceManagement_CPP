@@ -14,13 +14,15 @@ namespace ResourceManagement::PackMaker::Private
 {
     struct PackEntry
     {
+        uint8_t entry_name_size;
+        uint32_t entry_total_size; // relative to ios::beg
         std::string entry_name;
-        uint32_t entry_name_size;
-        uint32_t entry_end;
+        std::vector<char> buffer;
     };
     
-    ErrorChecker::ErrorFlags::Flags _bake_binary_data(std::vector<char> &to, std::filesystem::path file_path);
-    
+    ErrorChecker::ErrorFlags::Flags _extract_binary_data(std::vector<char> &to, std::filesystem::path file_path);
+
+    void _pack_binaries_to_resource_file(std::vector<PackEntry> &pack_entries, std::string _res_file_path);
 }
 
 #endif // RESOURCE_MANAGEMENT_PACK_MAKER_H

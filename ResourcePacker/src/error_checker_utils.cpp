@@ -59,8 +59,8 @@ namespace ResourceManagement::ErrorChecker::Utils
         if (result)
         {
             _log_success(SuccessTypes::SYSTEM, " Path normalized (Unixified):\n"
-                         "   Input: " + _initial_path + "\n"
-                         "   Normalized: " + path);
+                         "      Input: " + _initial_path + "\n"
+                         "      Normalized: " + path + "\n");
         }
     }
 }
