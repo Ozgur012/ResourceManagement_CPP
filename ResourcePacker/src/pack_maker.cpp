@@ -104,11 +104,11 @@ namespace ResourceManagement::PackMaker::Private
 
         ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "Resource file path = " + _res_file_path);
         std::vector<char> pack_buffer;
-
+        uint32_t entry_count;
         // 1st 4 bytes for entry count
         {
             // small endian
-            uint32_t entry_count = pack_entries.size();
+            entry_count = pack_entries.size();
             pack_buffer.push_back(entry_count & 0xff);
             pack_buffer.push_back((entry_count >> 8) & 0xff);
             pack_buffer.push_back((entry_count >> 16) & 0xff);
@@ -146,7 +146,7 @@ namespace ResourceManagement::PackMaker::Private
         pack_buffer.shrink_to_fit();
         std::ofstream out(_res_file_path, std::ios::binary | std::ios::out);
 
-
+        ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, ": entry count = " + std::to_string(entry_count));
         out.write(pack_buffer.data(), pack_buffer.size());
         out.close();
     }

@@ -7,28 +7,44 @@
 
 namespace ResourceManagement::ResourceLoader
 {
+    namespace Private
+    {
+        std::string _res_pack_path;
+    }
     void init(std::string res_pack_path)
     {
-        //Private::_res_pack_path = res_pack_path;
-        std::cout << "Hello resource loader. Resource pack at = " << res_pack_path << "\n";
-        std::ifstream in(res_pack_path, std::ios::binary);
+        Private::_res_pack_path = res_pack_path;
+    }
+
+    std::vector<char> get_resource_data(std::string &access_path)
+    {
+        std::vector<char> data;
+        std::ifstream in(Private::_res_pack_path, std::ios::binary);
 
         if (!in.is_open())
         {
-            std::cout << "Could not open res pack file\n";
+            std::cout << "ResourceLoader: Failed to open resource file = " << Private::_res_pack_path << "\n";
         } else{
-            std::cout << "Res pack open\n";
+            std::cout << "ResourceLoader: Resource file open successfully at = " << Private::_res_pack_path << "\n";
         }
-    }
 
-    std::vector<char> get_image_data(std::string &access_path)
-    {
-        std::vector<char> data;
-        // std::ifstream in(Private::_res_pack_path, std::ios::binary);
+        uint32_t entry_count;
+        in.read((char*)entry_count, 4);
+        
+        for (size_t i = 0; i < entry_count; i++)
+        {
+            uint16_t entry_name_size;
+            in.read((char*)entry_name_size, 1);
+
+            if (entry_name_size != access_path.size()) continue;
+
+            // Search and find the asset.
+            // Change the fle format for the entries, [entry name size][access path][total size][data]
+        }
+        
 
 
-
-
+        in.close();
         return data;
     }
 
