@@ -91,6 +91,7 @@ int main(int argc, char* argv[])
             ResourceManagement::ErrorChecker::SuccessTypes::VALIDATION,
             "Validation succeeded. Ready to pack resources..."
         );
+        ResourceManagement::ErrorChecker::Utils::_flush_logs();
 
         ResourceManagement::PackMaker::make_resource_pack(config_path, build_type);
         return 0;

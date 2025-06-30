@@ -4,7 +4,9 @@ project(ResourcePacker)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
-add_executable(${PROJECT_NAME} 
+set(BINARY_NAME "rp")
+
+add_executable(${BINARY_NAME} 
     src/command_line_interface.cpp
     src/environment_validator.cpp
     src/pack_maker.cpp
@@ -12,14 +14,14 @@ add_executable(${PROJECT_NAME}
 )
 
 target_compile_definitions(
-    ${PROJECT_NAME} PRIVATE
+    ${BINARY_NAME} PRIVATE
     $<$<CONFIG:Debug>:DEBUG>
     $<$<CONFIG:Release>:RELEASE>
 )
 
 
-target_include_directories(${PROJECT_NAME} PRIVATE _internal)
-target_include_directories(${PROJECT_NAME} PRIVATE "F:/Engines/nlohman_json-3.12.0/single_include")
+target_include_directories(${BINARY_NAME} PRIVATE _internal)
+target_include_directories(${BINARY_NAME} PRIVATE "F:/Engines/nlohman_json-3.12.0/single_include")
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ResourceCommon)
-target_link_libraries(${PROJECT_NAME} PRIVATE ResourceLoader)
+target_link_libraries(${BINARY_NAME} PRIVATE ResourceCommon)
+target_link_libraries(${BINARY_NAME} PRIVATE ResourceLoader)

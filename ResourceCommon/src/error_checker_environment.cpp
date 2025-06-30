@@ -8,7 +8,6 @@ namespace ResourceManagement::ErrorChecker::Environment
 {
     bool _is_json_path_supplied(const std::string& config_path)
     {
-        
         if (config_path.empty())
         {
             ResourceManagement::ErrorChecker::Utils::_log_error(
@@ -20,10 +19,10 @@ namespace ResourceManagement::ErrorChecker::Environment
             return false;
         }
 
-        ResourceManagement::ErrorChecker::Utils::_log_success(
-            SuccessTypes::CONFIG,
-            " Config path argument is present."
-        );
+        // ResourceManagement::ErrorChecker::Utils::_log_success(
+        //     SuccessTypes::CONFIG,
+        //     " Config path argument is present."
+        // );
 
         return true;
     }
@@ -39,10 +38,10 @@ namespace ResourceManagement::ErrorChecker::Environment
             return false;
         }
 
-        ResourceManagement::ErrorChecker::Utils::_log_success(
-            SuccessTypes::PATH,
-            " File has a .json extension: " + path
-        );
+        // ResourceManagement::ErrorChecker::Utils::_log_success(
+        //     SuccessTypes::PATH,
+        //     " File has a .json extension: " + path
+        // );
 
         std::ifstream file(path);
         bool result = file.is_open();
@@ -62,9 +61,9 @@ namespace ResourceManagement::ErrorChecker::Environment
                 "Failed to open JSON configuration file at path: " + path
             );
         } else {
-            ResourceManagement::ErrorChecker::Utils::_log_success(
-            SuccessTypes::FILE,
-            " JSON configuration file successfully opened: " + path);
+            // ResourceManagement::ErrorChecker::Utils::_log_success(
+            // SuccessTypes::FILE,
+            // " JSON configuration file successfully opened: " + path);
         }
         
         return result;
@@ -98,10 +97,10 @@ namespace ResourceManagement::ErrorChecker::Environment
             return false;
         }
 
-        ResourceManagement::ErrorChecker::Utils::_log_success(
-            SuccessTypes::JSON,
-            " JSON file successfully parsed."
-        );
+        // ResourceManagement::ErrorChecker::Utils::_log_success(
+        //     SuccessTypes::JSON,
+        //     " JSON file successfully parsed."
+        // );
 
         bool result = true;
 
@@ -113,10 +112,10 @@ namespace ResourceManagement::ErrorChecker::Environment
                     "JSON is missing required key: \"" + key + "\""
                 );
             } else {
-                ResourceManagement::ErrorChecker::Utils::_log_success(
-                    SuccessTypes::VALIDATION,
-                    " Found required key: \"" + key + "\""
-                );
+                // ResourceManagement::ErrorChecker::Utils::_log_success(
+                //     SuccessTypes::VALIDATION,
+                //     " Found required key: \"" + key + "\""
+                // );
             }
         };
 
@@ -126,12 +125,8 @@ namespace ResourceManagement::ErrorChecker::Environment
         check_key(ResourceManagement::ErrorChecker::Private::resource_pack_file_name);
         check_key(ResourceManagement::ErrorChecker::Private::encryption_key);
 
-        if (data.contains(ResourceManagement::ErrorChecker::Private::encryption_key) &&
-            data[ResourceManagement::ErrorChecker::Private::encryption_key].is_string() &&
-            data[ResourceManagement::ErrorChecker::Private::encryption_key].get<std::string>().empty()) {
-            ResourceManagement::ErrorChecker::Utils::_log_error(
-                ResourceManagement::ErrorChecker::ErrorTypes::CONFIG,
-                "\"encryption_key\" is empty. Resources will not be encrypted"
+        if (data.contains(ResourceManagement::ErrorChecker::Private::encryption_key) && data[ResourceManagement::ErrorChecker::Private::encryption_key].is_string() && data[ResourceManagement::ErrorChecker::Private::encryption_key].get<std::string>().empty()) {
+                ResourceManagement::ErrorChecker::Utils::_log_error(ResourceManagement::ErrorChecker::ErrorTypes::CONFIG,"\"encryption_key\" is empty. Resources will not be encrypted"
             );
         }
 
@@ -146,10 +141,10 @@ namespace ResourceManagement::ErrorChecker::Environment
                         "Directory path in \"" + key + "\" does not exist: \"" + dir + "\""
                     );
                 } else {
-                    ResourceManagement::ErrorChecker::Utils::_log_success(
-                        SuccessTypes::PATH,
-                        " Directory exists for key \"" + key + "\": " + dir
-                    );
+                    // ResourceManagement::ErrorChecker::Utils::_log_success(
+                    //     SuccessTypes::PATH,
+                    //     " Directory exists for key \"" + key + "\": " + dir
+                    // );
                 }
             };
 

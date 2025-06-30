@@ -7,6 +7,7 @@
 
 namespace ResourceManagement::PackMaker
 {
+    bool encrypted = false;
     void make_resource_pack(std::string &pack_config_path, std::string build_type);
 }
 

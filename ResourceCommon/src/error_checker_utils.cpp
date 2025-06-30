@@ -58,8 +58,8 @@ namespace ResourceManagement::ErrorChecker::Utils
 
         if (result)
         {
-            _log_success(SuccessTypes::SYSTEM, " Path normalized (Unixified):\n"
-                         "      Input: " + _initial_path + "\n"
+            _log_success(SuccessTypes::SYSTEM, " Output directory path normalized (Unixified):\n"
+                         "      Initial: " + _initial_path + "\n"
                          "      Normalized: " + path + "\n");
         }
     }

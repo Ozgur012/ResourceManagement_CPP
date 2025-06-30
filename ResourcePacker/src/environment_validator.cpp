@@ -31,9 +31,6 @@ namespace ResourceManagement::Validator
             result = false;
         }
 
-        ErrorChecker::Utils::_flush_logs();
-
-
         return result;
     }
 

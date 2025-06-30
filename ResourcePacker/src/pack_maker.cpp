@@ -55,6 +55,7 @@ namespace ResourceManagement::PackMaker
         }
 
 
+
         ErrorChecker::Utils::_flush_logs();
 
         Private::_pack_binaries_to_resource_file(pack_entires, resource_pack_file_path);
@@ -99,10 +100,9 @@ namespace ResourceManagement::PackMaker::Private
     {
         if (pack_entries.empty())
         {
-            ErrorChecker::Utils::_log_error(ErrorChecker::ErrorTypes::FILE, ": No valid files to pack. Failed to create resource pack.");
+            ErrorChecker::Utils::_log_error(ErrorChecker::ErrorTypes::FILE, ": No valid files to pack. Input directory is empty. Failed to create resource pack.");
+            ErrorChecker::Utils::_flush_logs();
             return;
-        } else{
-            ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, ": Packing binaries...");
         }
 
         ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "Resource file path = " + _res_file_path);
@@ -145,17 +145,19 @@ namespace ResourceManagement::PackMaker::Private
             {
                 pack_buffer.insert(pack_buffer.end(), item.buffer.begin(), item.buffer.end())    ;
             }
-            ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, "Resource packed with access name = " + item.entry_name);
+            ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, "Resource packed with access name: " + item.entry_name);
         }
 
         pack_buffer.shrink_to_fit();
 
         std::ofstream out(_res_file_path, std::ios::binary | std::ios::out);
 
-        ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, ": entry count = " + std::to_string(entry_count));
-        ErrorChecker::Utils::_flush_logs();
+        ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, ": Packed = " + std::to_string(entry_count) + " files");
         out.write(pack_buffer.data(), pack_buffer.size());
         out.close();
+
+        ErrorChecker::Utils::_flush_logs();
+
         std::cout << "PACKING FINISHED...\n";
     }
 }

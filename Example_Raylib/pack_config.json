@@ -1,5 +1,5 @@
 {
-    "input_dir": "F:/Projects/Cpp/ResourceManagement_cxx/Assets",
+    "input_dir": "F:/Assets/Audio/Music",
     "output_dir_debug": "F:/Projects/Cpp/ResourceManagement_cxx/build/Example_Raylib/Debug",
     "output_dir_release": "F:/Projects/Cpp/ResourceManagement_cxx/build/Example_Raylib/Release",
     "output_sub_dir": "",

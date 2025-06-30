@@ -13,7 +13,7 @@ namespace ResourceManagement::ErrorChecker::Packing
         }
         else
         {
-            std::cout << prefix << " SUCCESS: " << message << "\n";
+            std::cout << "\r\033[K" << prefix << " SUCCESS: " << message << std::flush;
         }
     }
 }
