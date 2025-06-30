@@ -29,8 +29,8 @@ int main()
     UnloadImage(img);
 
     // Music
-    std::vector<char> music_data = ResourceManagement::ResourceLoader::get_raw_resource_data("access name of your wav");
-    Music music = LoadMusicStreamFromMemory(".wav", (unsigned char*)music_data.data(), music_data.size());
+    std::vector<char> music_data = ResourceManagement::ResourceLoader::get_raw_resource_data("access name of your ogg");
+    Music music = LoadMusicStreamFromMemory(".ogg", (unsigned char*)music_data.data(), music_data.size());
     PlayMusicStream(music);
     
     // Sound
