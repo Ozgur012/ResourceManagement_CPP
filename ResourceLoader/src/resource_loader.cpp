@@ -76,7 +76,7 @@ namespace ResourceManagement::ResourceLoader
         }
 
         in.close();
-        ErrorChecker::Utils::_flush_logs();
+        
         return data;
     }
 

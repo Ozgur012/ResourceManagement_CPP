@@ -8,6 +8,11 @@ namespace ResourceManagement::ErrorChecker::ErrorFlags
     enum class Flags{ SUCCESS, FAILURE};
 }
 
+namespace ResourceManagement::ErrorChecker::EncryptionFlag
+{
+    extern bool apply_encryption; // _is_valid_pack_config_json function in validation changes this.
+}
+
 namespace ResourceManagement::ErrorChecker::Private
 {
     inline const std::string input_dir = "input_dir";
@@ -40,10 +45,12 @@ namespace ResourceManagement::ErrorChecker::SuccessTypes
 namespace ResourceManagement::ErrorChecker::Utils
 {
     void _unixify_path(std::string &path);
+
+    void _begin_log_buffer();
     void _log_error(const std::string& type, const std::string& message);
     void _log_success(const std::string& type, const std::string& message);
+    void _end_log_bugger();
 
-    void _flush_logs();
 }
 
 namespace ResourceManagement::ErrorChecker::Environment

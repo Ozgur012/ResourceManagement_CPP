@@ -54,10 +54,6 @@ namespace ResourceManagement::PackMaker
             }
         }
 
-
-
-        ErrorChecker::Utils::_flush_logs();
-
         Private::_pack_binaries_to_resource_file(pack_entires, resource_pack_file_path);
 
     }
@@ -77,7 +73,8 @@ namespace ResourceManagement::PackMaker::Private
             result = ErrorChecker::ErrorFlags::Flags::FAILURE;
         
             ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::FAILURE, " Unable to open file at: " + file_path.generic_string());
-        } else{
+        } 
+        else{
             ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, " File Opened at: " + file_path.generic_string());
         }
 
@@ -101,11 +98,10 @@ namespace ResourceManagement::PackMaker::Private
         if (pack_entries.empty())
         {
             ErrorChecker::Utils::_log_error(ErrorChecker::ErrorTypes::FILE, ": No valid files to pack. Input directory is empty. Failed to create resource pack.");
-            ErrorChecker::Utils::_flush_logs();
+            
             return;
         }
 
-        ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "Resource file path = " + _res_file_path);
         std::vector<char> pack_buffer;
         uint32_t entry_count;
 
@@ -148,16 +144,15 @@ namespace ResourceManagement::PackMaker::Private
             ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, "Resource packed with access name: " + item.entry_name);
         }
 
+        ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, "Resource file path = " + _res_file_path);
+        ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "Packed = " + std::to_string(entry_count) + " files");
+
+        // Write to pack file
         pack_buffer.shrink_to_fit();
-
         std::ofstream out(_res_file_path, std::ios::binary | std::ios::out);
-
-        ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, ": Packed = " + std::to_string(entry_count) + " files");
         out.write(pack_buffer.data(), pack_buffer.size());
         out.close();
 
-        ErrorChecker::Utils::_flush_logs();
-
-        std::cout << "PACKING FINISHED...\n";
+        std::cout << "FINISHING...\n";
     }
 }
