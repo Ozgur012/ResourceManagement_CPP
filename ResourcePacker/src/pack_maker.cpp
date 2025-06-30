@@ -4,24 +4,26 @@
 #include <filesystem>
 #include "error_checker.hpp"
 #include "nlohmann/json.hpp"
-#include "pack_format.h"
+#include "pack_format.hpp"
 
 namespace ResourceManagement::PackMaker
 {
-    void make_resource_pack(std::string &pack_config_path)
+    void make_resource_pack(std::string &pack_config_path, std::string build_type)
     {
         std::ifstream _json_file(pack_config_path);
         nlohmann::json pack_config_json = nlohmann::json::parse(_json_file);
         std::filesystem::path _input_dir = pack_config_json["input_dir"];
-        std::string _output_dir_debug = pack_config_json["output_dir_debug"];
+        std::string _output_dir = (build_type == "Release") ? pack_config_json["output_dir_release"] : pack_config_json["output_dir_debug"];
+
         std::filesystem::path _resouce_pack_file_name = pack_config_json["resource_pack_file_name"];
+
 
         std::string resource_pack_file_path;
         if (_resouce_pack_file_name.has_extension())
         {
-            resource_pack_file_path =  _output_dir_debug + "/" + _resouce_pack_file_name.generic_string();
+            resource_pack_file_path =  _output_dir + "/" + _resouce_pack_file_name.generic_string();
         } else{
-            resource_pack_file_path =  _output_dir_debug + "/" + _resouce_pack_file_name.generic_string() + PackStorageFormat::PACK_EXTENTION;
+            resource_pack_file_path =  _output_dir + "/" + _resouce_pack_file_name.generic_string() + PackFormat::PACK_EXTENTION;
         }
         
 
@@ -45,18 +47,18 @@ namespace ResourceManagement::PackMaker
                     continue;
                 }
                 
-                _entry.entry_total_size = PackStorageFormat::ENTRY_HEADER_FIXED_SIZE + _access_path_size + _entry.buffer.size();
+                _entry.entry_total_size = PackFormat::ENTRY_HEADER_FIXED_SIZE + _access_path_size + _entry.buffer.size();
 
                 pack_entires.push_back(_entry);
 
-                ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "_entry.entry_name_size = " + std::to_string(_entry.entry_name_size));
-                ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "_entry.entry_total_size = " + std::to_string(_entry.entry_total_size));
             }
         }
 
-        Private::_pack_binaries_to_resource_file(pack_entires, resource_pack_file_path);
 
         ErrorChecker::Utils::_flush_logs();
+
+        Private::_pack_binaries_to_resource_file(pack_entires, resource_pack_file_path);
+
     }
 }
 
@@ -72,9 +74,10 @@ namespace ResourceManagement::PackMaker::Private
         if (!in.is_open())
         {
             result = ErrorChecker::ErrorFlags::Flags::FAILURE;
-            ErrorChecker::Utils::_log_error(ErrorChecker::ErrorTypes::FILE, " Unable to open file at: " + file_path.generic_string());
+        
+            ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::FAILURE, " Unable to open file at: " + file_path.generic_string());
         } else{
-            ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, ": File Opened at = " + file_path.generic_string());
+            ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, " File Opened at: " + file_path.generic_string());
         }
 
         if (result == ErrorChecker::ErrorFlags::Flags::SUCCESS)
@@ -105,7 +108,8 @@ namespace ResourceManagement::PackMaker::Private
         ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "Resource file path = " + _res_file_path);
         std::vector<char> pack_buffer;
         uint32_t entry_count;
-        // 1st 4 bytes for entry count
+
+        // Entry count. 4 bytes at the start of the file.
         {
             // small endian
             entry_count = pack_entries.size();
@@ -140,14 +144,18 @@ namespace ResourceManagement::PackMaker::Private
             //buffer: Dynamic
             {
                 pack_buffer.insert(pack_buffer.end(), item.buffer.begin(), item.buffer.end())    ;
-            }                        
+            }
+            ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, "Resource packed with access name = " + item.entry_name);
         }
 
         pack_buffer.shrink_to_fit();
+
         std::ofstream out(_res_file_path, std::ios::binary | std::ios::out);
 
         ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, ": entry count = " + std::to_string(entry_count));
+        ErrorChecker::Utils::_flush_logs();
         out.write(pack_buffer.data(), pack_buffer.size());
         out.close();
+        std::cout << "PACKING FINISHED...\n";
     }
 }

@@ -4,10 +4,9 @@
 
 namespace ResourceManagement::ResourceLoader
 {
-    
     void init(std::string res_pack_path);
-    std::vector<char> get_resource_data(std::string &access_path);
-    std::vector<char> load_test_resource();
+    std::vector<char> get_raw_resource_data(std::string access_path);
+    
     void pre_load_all_resources();
 }
 

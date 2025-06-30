@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 4.0)
-project(ResourceManagementCPP)
+project(ResourceManagementCPP LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
-include_directories("F:/Engines/nlohman_json-3.12.0/single_include")
+#include_directories("F:/Engines/nlohman_json-3.12.0/single_include")
 
 add_library(raylib STATIC IMPORTED)
 set_target_properties(
@@ -14,6 +11,7 @@ set_target_properties(
     INTERFACE_LINK_LIBRARIES winmm
 )
 
-add_subdirectory(ResourceLoader)
+add_subdirectory(ResourceCommon)
 add_subdirectory(ResourcePacker)
-add_subdirectory(TestProject)
+add_subdirectory(ResourceLoader)
+add_subdirectory(Example_Raylib)

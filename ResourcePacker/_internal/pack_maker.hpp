@@ -7,7 +7,7 @@
 
 namespace ResourceManagement::PackMaker
 {
-    void make_resource_pack(std::string &pack_config_path);
+    void make_resource_pack(std::string &pack_config_path, std::string build_type);
 }
 
 namespace ResourceManagement::PackMaker::Private

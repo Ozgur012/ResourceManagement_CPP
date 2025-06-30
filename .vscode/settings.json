@@ -85,6 +85,7 @@
         "iomanip": "cpp",
         "map": "cpp",
         "unordered_set": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "span": "cpp"
     }
 }

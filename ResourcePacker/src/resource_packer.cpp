@@ -3,58 +3,99 @@
 #include "error_checker.hpp"
 #include "command_line_interface.hpp"
 #include "pack_maker.hpp"
-
 #include "resource_loader.hpp"
-
-#define ENTRY_NAME_LENGTH_FIELD_SIZE 1      // 1 byte to store the length of the asset's name (0–255)
-#define ENTRY_NAME_MAX_LENGTH        256    // Maximum number of characters in the asset name
-#define ENTRY_OFFSET_FIELD_SIZE      4      // 4 bytes to store the offset of the asset data
-#define ENTRY_SIZE_FIELD_SIZE        4      // 4 bytes to store the size of the asset data
-
 
 int main(int argc, char* argv[])
 {
-    // No arguments: show "no command" notice + available commands
     if (argc < 2)
     {
         ResourceManagement::CLI::show_no_command_given();
         return 0;
     }
 
-    std::string arg1 = argv[1];
+    bool do_pack = false;
+    bool is_release = false;
+    bool is_debug = false;
+    std::string config_path;
 
-    // --help flag: show usage info
-    if (arg1 == "--help")
+    for (int i = 1; i < argc; ++i)
     {
-        ResourceManagement::CLI::show_help();
-        return 0;
+        std::string arg = argv[i];
+
+        if (arg == "--help")
+        {
+            ResourceManagement::CLI::show_help();
+            return 0;
+        }
+        else if (arg == "--guide")
+        {
+            ResourceManagement::CLI::show_resource_packing_guide();
+            return 0;
+        }
+        else if (arg == "--pack")
+        {
+            do_pack = true;
+        }
+        else if (arg == "--release")
+        {
+            is_release = true;
+        }
+        else if (arg == "--debug")
+        {
+            is_debug = true;
+        }
+        else if (arg.ends_with(".json"))
+        {
+            config_path = arg;
+        }
+        else
+        {
+            ResourceManagement::CLI::show_unknown_command(arg);
+            ResourceManagement::ErrorChecker::Utils::_flush_logs();
+            return -1;
+        }
     }
 
-    // --guide flag: show full how-to
-    if (arg1 == "--guide")
+    if (is_release && is_debug)
     {
-        ResourceManagement::CLI::show_resource_packing_guide();
-        return 0;
+        ResourceManagement::ErrorChecker::Utils::_log_error(
+            ResourceManagement::ErrorChecker::ErrorTypes::CONFIG,
+            "Cannot use both --release and --debug flags at the same time."
+        );
+        ResourceManagement::ErrorChecker::Utils::_flush_logs();
+        return -1;
     }
 
-    // --pack flag: validate and pack resources
-    if (arg1 == "--pack")
+    if (do_pack)
     {
-        std::string config_path = (argc >= 3) ? argv[2] : "";
+        if (config_path.empty())
+        {
+            ResourceManagement::ErrorChecker::Utils::_log_error(
+                ResourceManagement::ErrorChecker::ErrorTypes::CONFIG,
+                "No configuration file provided for --pack."
+            );
+            ResourceManagement::ErrorChecker::Utils::_flush_logs();
+            return -1;
+        }
+
+        std::string build_type = is_release ? "Release" : "Debug";
+        std::cout << "Packing in " << build_type << " mode.\n";
 
         if (!ResourceManagement::Validator::is_valid_environment(config_path))
         {
-            return -1; // Validation failed, logs already flushed
+            ResourceManagement::ErrorChecker::Utils::_flush_logs();
+            return -1;
         }
 
-        ResourceManagement::ErrorChecker::Utils::_log_success(ResourceManagement::ErrorChecker::SuccessTypes::VALIDATION, "Validation succeeded. Ready to pack resources..." );
-        ResourceManagement::PackMaker::make_resource_pack(config_path);
+        ResourceManagement::ErrorChecker::Utils::_log_success(
+            ResourceManagement::ErrorChecker::SuccessTypes::VALIDATION,
+            "Validation succeeded. Ready to pack resources..."
+        );
 
-        
+        ResourceManagement::PackMaker::make_resource_pack(config_path, build_type);
         return 0;
     }
 
-    // Unknown flag
-    ResourceManagement::CLI::show_unknown_command(arg1);
-    return -1;
+    ResourceManagement::CLI::show_no_command_given();
+    return 0;
 }

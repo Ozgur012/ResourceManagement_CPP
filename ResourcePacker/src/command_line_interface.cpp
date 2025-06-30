@@ -91,7 +91,11 @@ namespace ResourceManagement::CLI
             "STEP 4: Run the ResourcePacker\n"
             "-------------------------------\n"
             "Use the following command to validate and pack resources:\n\n"
+            "  Target Debug Directory:\n"
             "  ResourcePacker.exe --pack <path_to_json_config>\n\n"
+
+            "  Target Release Directory:\n"
+            "  ResourcePacker.exe --pack --release <path_to_json_config>\n\n"
 
             "Examples:\n"
             "  ResourcePacker.exe --pack C:\\Projects\\MyGame\\pack_config.json\n"
@@ -103,7 +107,8 @@ namespace ResourceManagement::CLI
             " - The JSON file is only required during the packing process.\n"
             " - The encryption key is required at runtime if resources are encrypted.\n"
             " - You do not need to ship the JSON file with your final build.\n"
-            " - The encryption key must be registered in code. Refer to the ResourceLoader docs.\n";
+            " - The encryption key must be registered in code. Refer to the ResourceLoader docs.\n"
+            " - If --release is not specified, ResourcePacker defaults to Debug mode.\n\n";
     }
 
 }
