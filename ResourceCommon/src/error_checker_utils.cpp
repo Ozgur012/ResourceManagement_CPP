@@ -9,39 +9,31 @@ namespace ResourceManagement::ErrorChecker::Utils
     inline std::vector<std::string> m_error_logs;
     inline std::vector<std::string> m_success_logs;
 
+    void _begin_log_buffer()
+    {
+        std::cout << "\n========RESOURCE_PACKER_START===========================================\n";
+    }
+
     void _log_error(const std::string& type, const std::string& message)
     {
         if (!message.empty())
-            m_error_logs.push_back(type + " ERROR: " + message);
+            std::cout << type << ": ERROR: " << message << "\n";
+            //m_error_logs.push_back(type + " ERROR: " + message);
     }
 
     void _log_success(const std::string& type, const std::string& message)
     {
         if (!message.empty())
-            m_success_logs.push_back(type + " SUCCESS: " + message);
+            std::cout << "\n" << type << ": SUCCESS: " << message << "\n";
+            //m_success_logs.push_back(type + " SUCCESS: " + message);
     }
 
-    void _flush_logs()
+    
+    void _end_log_bugger()
     {
-        if (!m_success_logs.empty())
-        {
-            std::cout << "\n========RESOURCE_PACKER_SUCCESS_LOG===========================================\n";
-            for (size_t i = 0; i < m_success_logs.size(); ++i)
-                std::cout << " " << std::setw(2) << (i + 1) << ". " << m_success_logs[i] << "\n";
-            std::cout << "=============================================================================\n\n";
-        }
-
-        if (!m_error_logs.empty())
-        {
-            std::cout << "\n========RESOURCE_PACKER_ERROR_LOG=============================================\n";
-            for (size_t i = 0; i < m_error_logs.size(); ++i)
-                std::cout << " " << std::setw(2) << (i + 1) << ". " << m_error_logs[i] << "\n";
-            std::cout << "=============================================================================\n\n";
-        }
-
-        m_success_logs.clear();
-        m_error_logs.clear();
+        std::cout << "========RESOURCE_PACKER_END=======================================\n\n";
     }
+
 
     void _unixify_path(std::string &path)
     {
@@ -58,9 +50,7 @@ namespace ResourceManagement::ErrorChecker::Utils
 
         if (result)
         {
-            _log_success(SuccessTypes::SYSTEM, " Output directory path normalized (Unixified):\n"
-                         "      Initial: " + _initial_path + "\n"
-                         "      Normalized: " + path + "\n");
+            _log_success(SuccessTypes::SYSTEM, " Output directory path normalized (Unixified): " + path);
         }
     }
 }

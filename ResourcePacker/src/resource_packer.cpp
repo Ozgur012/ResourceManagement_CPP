@@ -7,6 +7,7 @@
 
 int main(int argc, char* argv[])
 {
+    ResourceManagement::ErrorChecker::Utils::_begin_log_buffer();
     if (argc < 2)
     {
         ResourceManagement::CLI::show_no_command_given();
@@ -51,7 +52,6 @@ int main(int argc, char* argv[])
         else
         {
             ResourceManagement::CLI::show_unknown_command(arg);
-            ResourceManagement::ErrorChecker::Utils::_flush_logs();
             return -1;
         }
     }
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
             ResourceManagement::ErrorChecker::ErrorTypes::CONFIG,
             "Cannot use both --release and --debug flags at the same time."
         );
-        ResourceManagement::ErrorChecker::Utils::_flush_logs();
+        
         return -1;
     }
 
@@ -74,7 +74,6 @@ int main(int argc, char* argv[])
                 ResourceManagement::ErrorChecker::ErrorTypes::CONFIG,
                 "No configuration file provided for --pack."
             );
-            ResourceManagement::ErrorChecker::Utils::_flush_logs();
             return -1;
         }
 
@@ -83,7 +82,6 @@ int main(int argc, char* argv[])
 
         if (!ResourceManagement::Validator::is_valid_environment(config_path))
         {
-            ResourceManagement::ErrorChecker::Utils::_flush_logs();
             return -1;
         }
 
@@ -91,12 +89,14 @@ int main(int argc, char* argv[])
             ResourceManagement::ErrorChecker::SuccessTypes::VALIDATION,
             "Validation succeeded. Ready to pack resources..."
         );
-        ResourceManagement::ErrorChecker::Utils::_flush_logs();
 
         ResourceManagement::PackMaker::make_resource_pack(config_path, build_type);
+        ResourceManagement::ErrorChecker::Utils::_end_log_bugger();
         return 0;
     }
 
     ResourceManagement::CLI::show_no_command_given();
+    ResourceManagement::ErrorChecker::Utils::_end_log_bugger();
+    
     return 0;
 }
