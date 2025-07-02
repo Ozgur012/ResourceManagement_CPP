@@ -9,7 +9,7 @@ void test();
 
 int main()
 {
-    //test();
+    test();
     //run();
     return 0;
 }
@@ -20,8 +20,9 @@ void test()
 
     ResourceManagement::ResourceLoader::init("resources.pk"); // A path is supplied here. It is relative to your binary (exe).
     
-    ResourceManagement::ResourceLoader::test_data();
+    //ResourceManagement::ResourceLoader::test_data();
 
+    std::vector<char> img_data = ResourceManagement::ResourceLoader::get_raw_resource_data("access name of your png");
 
     std::cout << "test finished...\n";
 }
