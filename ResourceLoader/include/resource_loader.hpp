@@ -4,8 +4,10 @@
 
 namespace ResourceManagement::ResourceLoader
 {
-    void init(std::string res_pack_path);
+    void init(std::string res_pack_path, std::string encryption_key = "");
     std::vector<char> get_raw_resource_data(std::string access_path);
+
+    void test_data();
     
     void pre_load_all_resources();
 }

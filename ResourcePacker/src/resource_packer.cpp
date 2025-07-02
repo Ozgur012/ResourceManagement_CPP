@@ -22,6 +22,7 @@ int main(int argc, char* argv[])
     for (int i = 1; i < argc; ++i)
     {
         std::string arg = argv[i];
+        
 
         if (arg == "--help")
         {
@@ -45,7 +46,7 @@ int main(int argc, char* argv[])
         {
             is_debug = true;
         }
-        else if (arg.ends_with(".json"))
+        else if (arg.size() >= 5 && arg.substr(arg.size() - 5) == ".json")
         {
             config_path = arg;
         }

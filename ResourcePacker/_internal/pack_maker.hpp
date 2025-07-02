@@ -22,7 +22,7 @@ namespace ResourceManagement::PackMaker::Private
     
     ErrorChecker::ErrorFlags::Flags _extract_binary_data(std::vector<char> &to, std::filesystem::path file_path);
 
-    void _pack_binaries_to_resource_file(std::vector<PackEntry> &pack_entries, std::string _res_file_path);
+    void _pack_binaries_to_resource_file(std::vector<PackEntry> &pack_entries, std::string _res_file_path, std::string &_encryption_key);
 }
 
 #endif // RESOURCE_MANAGEMENT_PACK_MAKER_H

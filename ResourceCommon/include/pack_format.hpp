@@ -7,8 +7,9 @@
 namespace ResourceManagement::PackFormat
 {
     // Default extension used for packed resource files (used if the user provides none).
-    inline constexpr std::string PACK_EXTENTION = ".pk";
+    inline constexpr const char* PACK_EXTENTION = ".pk";
 
+    inline constexpr uint8_t ENCRYPTION_FLAG_SIZE = 1;
     // Number of bytes at the beginning of the file to store the total entry count (uint32_t).
     inline constexpr uint8_t FILE_ENTRY_COUNT_BYTE_SIZE = 4;
 
@@ -22,8 +23,7 @@ namespace ResourceManagement::PackFormat
 
     // Combined byte size of fixed metadata at the start of each entry.
     // This does NOT include the name or data bytes — only the header fields.
-    inline constexpr uint8_t ENTRY_HEADER_FIXED_SIZE =
-        ENTRY_NAME_BYTE_SIZE + ENTRY_TOTAL_SIZE_BYTE_SIZE;
+    inline constexpr uint8_t ENTRY_HEADER_FIXED_SIZE = ENCRYPTION_FLAG_SIZE + ENTRY_NAME_BYTE_SIZE + ENTRY_TOTAL_SIZE_BYTE_SIZE;
 
     // ENTRY_NAME_BYTE_SIZE: dynamic (N bytes)
     // ENTRY_DATA_BYTE_SIZE: dynamic (M bytes)

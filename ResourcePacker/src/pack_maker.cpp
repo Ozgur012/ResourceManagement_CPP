@@ -14,6 +14,8 @@ namespace ResourceManagement::PackMaker
         nlohmann::json pack_config_json = nlohmann::json::parse(_json_file);
         std::filesystem::path _input_dir = pack_config_json["input_dir"];
         std::string _output_dir = (build_type == "Release") ? pack_config_json["output_dir_release"] : pack_config_json["output_dir_debug"];
+        std::string _encryption_key = pack_config_json["encryption_key"];
+        std::cout << "_encryption_key: " << _encryption_key << "\n";
 
         std::filesystem::path _resouce_pack_file_name = pack_config_json["resource_pack_file_name"];
 
@@ -54,7 +56,7 @@ namespace ResourceManagement::PackMaker
             }
         }
 
-        Private::_pack_binaries_to_resource_file(pack_entires, resource_pack_file_path);
+        Private::_pack_binaries_to_resource_file(pack_entires, resource_pack_file_path, _encryption_key);
 
     }
 }
@@ -93,7 +95,7 @@ namespace ResourceManagement::PackMaker::Private
         return result;
     }
 
-    void _pack_binaries_to_resource_file(std::vector<PackEntry> &pack_entries, std::string _res_file_path)
+    void _pack_binaries_to_resource_file(std::vector<PackEntry> &pack_entries, std::string _res_file_path, std::string &_encryption_key)
     {
         if (pack_entries.empty())
         {
@@ -105,10 +107,23 @@ namespace ResourceManagement::PackMaker::Private
         std::vector<char> pack_buffer;
         uint32_t entry_count;
 
+        // Mark encrpyted. Actual application of encrpytion happens after the data is packed in to buffer
+        {
+            char encrpyted = 0;
+
+            if (!_encryption_key.empty()) encrpyted = 1;
+
+            std::cout << "\nRESOURCE LOADER : adding encrpyted flag = " << static_cast<int>(encrpyted) << "\n";
+            pack_buffer.push_back(encrpyted);
+            std::cout << "\nRESOURCE LOADER : buffer size = " << pack_buffer.size() << "\n";
+        }
+        
         // Entry count. 4 bytes at the start of the file.
         {
             // small endian
-            entry_count = pack_entries.size();
+            //entry_count = pack_entries.size();
+
+            entry_count = 43; // TESTING
             pack_buffer.push_back(entry_count & 0xff);
             pack_buffer.push_back((entry_count >> 8) & 0xff);
             pack_buffer.push_back((entry_count >> 16) & 0xff);
@@ -144,11 +159,27 @@ namespace ResourceManagement::PackMaker::Private
             ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, "Resource packed with access name: " + item.entry_name);
         }
 
-        ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, "Resource file path = " + _res_file_path);
+        pack_buffer.shrink_to_fit();
+
+
+        if (!_encryption_key.empty())
+        {
+            ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "Applying encryption...");
+            size_t key_len = _encryption_key.size();
+
+            // start from index 1 because the first byte are the encrption flag.
+            for (size_t i = 1; i < pack_buffer.size(); ++i)
+            {
+                pack_buffer[i] ^= _encryption_key[i % key_len];
+            }
+            ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "Encryption Complete.");
+        }
+
+        ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, "Resource file path at = " + _res_file_path);
         ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "Packed = " + std::to_string(entry_count) + " files");
 
         // Write to pack file
-        pack_buffer.shrink_to_fit();
+        
         std::ofstream out(_res_file_path, std::ios::binary | std::ios::out);
         out.write(pack_buffer.data(), pack_buffer.size());
         out.close();

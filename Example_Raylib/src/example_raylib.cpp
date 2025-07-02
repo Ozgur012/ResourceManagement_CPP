@@ -4,14 +4,33 @@
 #include <fstream>
 #include <filesystem>
 
-
+void run();
+void test();
 
 int main()
+{
+    //test();
+    //run();
+    return 0;
+}
+
+void test()
+{
+    std::cout << "running test\n";
+
+    ResourceManagement::ResourceLoader::init("resources.pk"); // A path is supplied here. It is relative to your binary (exe).
+    
+    ResourceManagement::ResourceLoader::test_data();
+
+
+    std::cout << "test finished...\n";
+}
+
+void run()
 {
     InitWindow(800, 800, "");
     InitAudioDevice();
     SetTargetFPS(60);
-
 
     ResourceManagement::ResourceLoader::init("resources.pk"); // A path is supplied here. It is relative to your binary (exe).
 
@@ -29,7 +48,7 @@ int main()
     UnloadImage(img);
 
     // Music
-    std::vector<char> music_data = ResourceManagement::ResourceLoader::get_raw_resource_data("access name of your ogg");
+    std::vector<char> music_data = ResourceManagement::ResourceLoader::get_raw_resource_data("Assets/Audio/Music/TetrisSongOGG.ogg");
     Music music = LoadMusicStreamFromMemory(".ogg", (unsigned char*)music_data.data(), music_data.size());
     PlayMusicStream(music);
     
@@ -56,6 +75,4 @@ int main()
     UnloadTexture(texture);
     UnloadMusicStream(music);
     CloseWindow();
-
-    return 0;
 }
