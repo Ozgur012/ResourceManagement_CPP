@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace ResourceManagement::ErrorChecker::Utils
+namespace rm::err::Utils
 {
     inline std::vector<std::string> m_error_logs;
     inline std::vector<std::string> m_success_logs;

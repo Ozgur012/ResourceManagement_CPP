@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-namespace ResourceManagement::CLI
+namespace rm::CLI
 {
     void show_unknown_command(const std::string& command)
     {

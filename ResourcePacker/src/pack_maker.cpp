@@ -2,11 +2,12 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include "rm_config.hpp"
 #include "error_checker.hpp"
 #include "nlohmann/json.hpp"
 #include "pack_format.hpp"
 
-namespace ResourceManagement::PackMaker
+namespace rm::PackMaker
 {
     void make_resource_pack(std::string &pack_config_path, std::string build_type)
     {
@@ -28,31 +29,33 @@ namespace ResourceManagement::PackMaker
             resource_pack_file_path =  _output_dir + "/" + _resouce_pack_file_name.generic_string() + PackFormat::PACK_EXTENTION;
         }
         
-
         std::vector<Private::PackEntry> pack_entires;
-
+        uint32_t _id = 0;
         for (auto &item : std::filesystem::recursive_directory_iterator(_input_dir))
         {
             if (item.is_regular_file())
             {
-                std::string _access_path = _input_dir.stem().string() + "/" + item.path().lexically_relative(_input_dir).generic_string(); // Generic string must be used to ensure that the path usses "/" instead of "\\"
-                uint8_t _access_path_size = static_cast<uint8_t>(_access_path.size());
-
-                Private::PackEntry _entry;
-                _entry.entry_name = _access_path;
-                _entry.entry_name_size = _access_path_size;
-
-                
-                
-                if (Private::_extract_binary_data(_entry.buffer, item.path().string()) == ErrorChecker::ErrorFlags::Flags::FAILURE)
+                // CHECK IF EXTENSION IS SUPPORTED.
+                if (!rm::Config::is_supported_type(item.path().extension().string()))
                 {
                     continue;
                 }
+
+                std::filesystem::path _access_path = _input_dir.stem().string() + "/" + item.path().lexically_relative(_input_dir).generic_string(); // Generic string must be used to ensure that the path usses "/" instead of "\\"
+
+                uint8_t _access_path_size = static_cast<uint8_t>(_access_path.string().size());
+
+                Private::PackEntry _entry;
+                _entry.entry_id = _id++;
+                _entry.entry_name = _access_path.string();
+                _entry.entry_name_size = _access_path_size;
+                _entry.file_path =  item.path().string();
                 
-                _entry.entry_total_size = PackFormat::ENTRY_HEADER_FIXED_SIZE + _access_path_size + _entry.buffer.size();
-
-                pack_entires.push_back(_entry);
-
+                if (Private::_parse_binary_data(_entry, _encryption_key) == err::errFlags::Flags::SUCCESS)
+                {
+                    _entry.entry_total_size = PackFormat::ENTRY_CHUNK_FIXED_SIZE + _access_path_size + _entry.data.size();
+                    pack_entires.push_back(_entry);
+                }
             }
         }
 
@@ -61,33 +64,47 @@ namespace ResourceManagement::PackMaker
     }
 }
 
-namespace ResourceManagement::PackMaker::Private
+namespace rm::PackMaker::Private
 {
-    ErrorChecker::ErrorFlags::Flags _extract_binary_data(std::vector<char> &to, std::filesystem::path file_path)
+    inline err::errFlags::Flags _parse_binary_data(Private::PackEntry &pack_entry, std::string &_encryption_key)
     {
-        ErrorChecker::ErrorFlags::Flags result = ErrorChecker::ErrorFlags::Flags::SUCCESS;
+        err::errFlags::Flags result = err::errFlags::Flags::SUCCESS;
 
-        std::ifstream in(file_path, std::ios::binary | std::ios::ate);
-
+        std::ifstream in(pack_entry.file_path, std::ios::binary | std::ios::ate);
 
         if (!in.is_open())
         {
-            result = ErrorChecker::ErrorFlags::Flags::FAILURE;
+            result = err::errFlags::Flags::FAILURE;
         
-            ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::FAILURE, " Unable to open file at: " + file_path.generic_string());
+            err::Packing::_log_packing(err::errFlags::Flags::FAILURE, " Unable to open file at: " + pack_entry.file_path.generic_string());
         } 
         else{
-            ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, " File Opened at: " + file_path.generic_string());
+            err::Packing::_log_packing(err::errFlags::Flags::SUCCESS, " File Opened at: " + pack_entry.file_path.generic_string());
         }
 
-        if (result == ErrorChecker::ErrorFlags::Flags::SUCCESS)
+        if (result == err::errFlags::Flags::SUCCESS)
         {
             size_t size = in.tellg();
             in.seekg(0, std::ios::beg);
             
-            to.resize(size);
+            pack_entry.data.resize(size);
             
-            in.read(to.data(), size);
+            in.read(pack_entry.data.data(), size);
+
+            if (!_encryption_key.empty())
+            {
+                err::Utils::_log_success(err::SuccessTypes::FILE, "Applying encryption...");
+                size_t key_len = _encryption_key.size();
+
+                // Offset for file metadata. Name is dynamic so its size is added where needed as it is here.
+                size_t _meta_data_offset = PackFormat::ENTRY_CHUNK_FIXED_SIZE + pack_entry.entry_name_size;
+
+                for (size_t i = _meta_data_offset; i < pack_entry.data.size(); ++i)
+                {
+                    pack_entry.data[i] ^= _encryption_key[i % key_len];
+                }
+                err::Utils::_log_success(err::SuccessTypes::FILE, "Encryption Complete.");
+            }
 
             in.close();
         }
@@ -99,7 +116,7 @@ namespace ResourceManagement::PackMaker::Private
     {
         if (pack_entries.empty())
         {
-            ErrorChecker::Utils::_log_error(ErrorChecker::ErrorTypes::FILE, ": No valid files to pack. Input directory is empty. Failed to create resource pack.");
+            err::Utils::_log_error(err::ErrorTypes::FILE, ": No valid files to pack. Input directory is empty. Failed to create resource pack.");
             
             return;
         }
@@ -107,44 +124,48 @@ namespace ResourceManagement::PackMaker::Private
         std::vector<char> pack_buffer;
         uint32_t entry_count;
 
-        // Mark encrpyted. Actual application of encrpytion happens after the data is packed in to buffer
+        // FILE META DATA
         {
-            char encrpyted = 0;
-
-            if (!_encryption_key.empty()) encrpyted = 1;
-
-            std::cout << "\nRESOURCE LOADER : adding encrpyted flag = " << static_cast<int>(encrpyted) << "\n";
+            // Set Encryption flag : 1 byte
+            bool encrpyted = true;
+            if (_encryption_key.empty()) encrpyted = false;
+            std::cout << "\nRESOURCE PACKER : adding encrpyted flag = " << std::to_string(encrpyted) << "\n";
             pack_buffer.push_back(encrpyted);
-            std::cout << "\nRESOURCE LOADER : buffer size = " << pack_buffer.size() << "\n";
-        }
-        
-        // Entry count. 4 bytes at the start of the file.
-        {
-            // small endian
-            //entry_count = pack_entries.size();
+            std::cout << "\nRESOURCE PACKER : buffer size = " << pack_buffer.size() << "\n";
 
-            entry_count = 43; // TESTING
+            // Entry count: 4 bytes
+            // small endian
+            entry_count = static_cast<uint32_t>(pack_entries.size());
             pack_buffer.push_back(entry_count & 0xff);
             pack_buffer.push_back((entry_count >> 8) & 0xff);
             pack_buffer.push_back((entry_count >> 16) & 0xff);
             pack_buffer.push_back((entry_count >> 24) & 0xff);
         }
-
+        
+        // ENTRY
         for (auto &item : pack_entries)
         {
-            // entry_name_size: 1 byte
+            // entry_id
             {
-                pack_buffer.push_back(item.entry_name_size);
+                // small endian
+                pack_buffer.push_back(item.entry_id & 0xff);
+                pack_buffer.push_back((item.entry_id >> 8) & 0xff);
+                pack_buffer.push_back((item.entry_id >> 16) & 0xff);
+                pack_buffer.push_back((item.entry_id >> 24) & 0xff);
             }
 
             // entry_total_size: 4 bytes
             {
                 // small endian
-                
                 pack_buffer.push_back(item.entry_total_size & 0xff);
                 pack_buffer.push_back((item.entry_total_size >> 8) & 0xff);
                 pack_buffer.push_back((item.entry_total_size >> 16) & 0xff);
                 pack_buffer.push_back((item.entry_total_size >> 24) & 0xff);
+            }
+
+            // entry_name_size: 1 byte
+            {
+                pack_buffer.push_back(item.entry_name_size);
             }
 
             // entry_name: Dynamic
@@ -152,31 +173,22 @@ namespace ResourceManagement::PackMaker::Private
                 pack_buffer.insert(pack_buffer.end(), item.entry_name.begin(), item.entry_name.end());
             }
 
+            // entry_data.size(): 
+
             //buffer: Dynamic
             {
-                pack_buffer.insert(pack_buffer.end(), item.buffer.begin(), item.buffer.end())    ;
+                pack_buffer.insert(pack_buffer.end(), item.data.begin(), item.data.end())    ;
             }
-            ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, "Resource packed with access name: " + item.entry_name);
+            err::Packing::_log_packing(err::errFlags::Flags::SUCCESS, "Resource packed with access name: " + item.entry_name);
         }
 
         pack_buffer.shrink_to_fit();
 
 
-        if (!_encryption_key.empty())
-        {
-            ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "Applying encryption...");
-            size_t key_len = _encryption_key.size();
 
-            // start from index 1 because the first byte are the encrption flag.
-            for (size_t i = 1; i < pack_buffer.size(); ++i)
-            {
-                pack_buffer[i] ^= _encryption_key[i % key_len];
-            }
-            ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "Encryption Complete.");
-        }
 
-        ErrorChecker::Packing::_log_packing(ErrorChecker::ErrorFlags::Flags::SUCCESS, "Resource file path at = " + _res_file_path);
-        ErrorChecker::Utils::_log_success(ErrorChecker::SuccessTypes::FILE, "Packed = " + std::to_string(entry_count) + " files");
+        err::Packing::_log_packing(err::errFlags::Flags::SUCCESS, "Resource file path at = " + _res_file_path);
+        err::Utils::_log_success(err::SuccessTypes::FILE, "Packed = " + std::to_string(entry_count) + " files");
 
         // Write to pack file
         
