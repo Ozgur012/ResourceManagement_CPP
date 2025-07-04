@@ -5,13 +5,15 @@
 // rLoader -> ResourceLoader
 namespace rm::rLoader
 {
+    enum LoadState{NONE, Failed, Begin, Finished};
+
     void init(std::string res_pack_path, std::string encryption_key = "");
 
-    void open_resource_buffer();
+    LoadState open_resource_buffer();
     
-    std::vector<char> get_buffered_resource_data(std::string access_path);
+    std::vector<char> get_buffered_data(std::string access_path);
 
-    void close_resource_buffer();
+    LoadState close_resource_buffer();
 
 }
 

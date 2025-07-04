@@ -15,7 +15,6 @@ namespace rm::PackMaker::Private
     struct PackEntry
     {
         std::filesystem::path file_path;
-        uint32_t entry_id;
         uint8_t entry_name_size;
         uint32_t entry_total_size; // relative to ios::beg
         std::string entry_name;

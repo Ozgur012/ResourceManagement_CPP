@@ -30,7 +30,6 @@ namespace rm::PackMaker
         }
         
         std::vector<Private::PackEntry> pack_entires;
-        uint32_t _id = 0;
         for (auto &item : std::filesystem::recursive_directory_iterator(_input_dir))
         {
             if (item.is_regular_file())
@@ -46,7 +45,6 @@ namespace rm::PackMaker
                 uint8_t _access_path_size = static_cast<uint8_t>(_access_path.string().size());
 
                 Private::PackEntry _entry;
-                _entry.entry_id = _id++;
                 _entry.entry_name = _access_path.string();
                 _entry.entry_name_size = _access_path_size;
                 _entry.file_path =  item.path().string();
@@ -142,19 +140,10 @@ namespace rm::PackMaker::Private
             pack_buffer.push_back((entry_count >> 24) & 0xff);
         }
         
-        // ENTRY
+        // ENTRY CHUNK
         for (auto &item : pack_entries)
         {
-            // entry_id
-            {
-                // small endian
-                pack_buffer.push_back(item.entry_id & 0xff);
-                pack_buffer.push_back((item.entry_id >> 8) & 0xff);
-                pack_buffer.push_back((item.entry_id >> 16) & 0xff);
-                pack_buffer.push_back((item.entry_id >> 24) & 0xff);
-            }
-
-            // entry_total_size: 4 bytes
+            // Entry total size: 4 bytes
             {
                 // small endian
                 pack_buffer.push_back(item.entry_total_size & 0xff);
@@ -163,19 +152,17 @@ namespace rm::PackMaker::Private
                 pack_buffer.push_back((item.entry_total_size >> 24) & 0xff);
             }
 
-            // entry_name_size: 1 byte
+            // Entry name size: 1 byte
             {
                 pack_buffer.push_back(item.entry_name_size);
             }
 
-            // entry_name: Dynamic
+            // Entry name: N bytes
             {
                 pack_buffer.insert(pack_buffer.end(), item.entry_name.begin(), item.entry_name.end());
             }
 
-            // entry_data.size(): 
-
-            //buffer: Dynamic
+            // Entry data: N bytes
             {
                 pack_buffer.insert(pack_buffer.end(), item.data.begin(), item.data.end())    ;
             }

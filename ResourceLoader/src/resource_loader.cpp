@@ -12,14 +12,13 @@ namespace rm::rLoader
 {
     namespace priv
     {
-        std::string name = "RESOURCE_LOADER:";
+        LoadState current_load_state = LoadState::NONE; // See header for LoadState
 
+        std::string name = "RESOURCE_LOADER:";
         std::string _res_pack_path;
         std::string _encryption_key;
 
-        bool continue_process = true;
         bool encryption_flag = false;
-        bool failed_to_open_file = false;
 
         std::ifstream pack_file;
 
@@ -36,7 +35,7 @@ namespace rm::rLoader
         std::cout << priv::name << "priv::_encryption_key = " << priv::_encryption_key << '\n';
     }
 
-    void open_resource_buffer()
+    LoadState open_resource_buffer()
     {
         priv::pack_file.exceptions(std::ios::badbit | std::ios::failbit);
 
@@ -47,8 +46,9 @@ namespace rm::rLoader
         catch(std::fstream::failure &e)
         {
             std::cerr << e.what() << ": Could not load file at path \"" << priv::_res_pack_path << "\"" << '\n';
-            priv::continue_process = false;
-            return;
+            
+            priv::current_load_state = LoadState::Failed;
+            return priv::current_load_state;
         }
 
         // FILE META DATA
@@ -58,23 +58,27 @@ namespace rm::rLoader
         if (priv::encryption_flag && priv::_encryption_key.empty())
         {
             std::cout << priv::name << "This file is encrypted. Please provide a valid encryption key." << '\n';
-            priv::continue_process = false;
-            return;
+            
+            priv::current_load_state = LoadState::Failed;
+            return priv::current_load_state;
         } else{
             std::cout << priv::name << "File is encrypted. Encryption key is present." << '\n';
         }
 
         priv::pack_file.read((char*)&priv::entry_count, PackFormat::FILE_ENTRY_COUNT_BYTE_SIZE);
         
-        
         std::cout << '\n';
         std::cout << priv::name << "Buffer open successfully. Ready to extract data..." << '\n';
         std::cout << priv::name << "Call get_buffered_resource_data() to extract individual resources." << '\n';
         std::cout << priv::name << "Once all required data is extracted must call close_resource_buffer()." << '\n';
         std::cout << '\n';
+
+        priv::current_load_state = LoadState::Begin;
+
+        return priv::current_load_state;
     }
     
-    std::vector<char> get_buffered_resource_data(std::string access_path)
+    std::vector<char> get_buffered_data(std::string access_path)
     {
         using namespace priv;
 
@@ -82,7 +86,7 @@ namespace rm::rLoader
         
         uint32_t file_index;
 
-        if (!priv::continue_process)
+        if (priv::current_load_state == LoadState::Failed)
         {
             std::cout << priv::name << "Resource extraction aborted.\n"
                     << priv::name << "A previous error (e.g., file open or encryption check failure) has prevented further processing.\n"
@@ -96,51 +100,82 @@ namespace rm::rLoader
         //Search for resource
         for (size_t i = 0; i < entry_count; i++)
         {
-            uint32_t _id;
-            uint32_t _entry_size;
-            uint8_t _entry_name_size;
-            std::string _entry_name;
-
-            // Read id
-            pack_file.read((char*)&_id, PackFormat::ENTRY_ID_SIZE_IN_BYTES);
-            std::cout << "res id = " << _id << '\n';
+            uint32_t _end_point = 0; // End point initially set to the entry size. Then as the get pointer moves, the amount moved will be deducted from it.
+            
+            uint32_t _entry_size = 0;
+            uint32_t _entry_name_size = 0;
+            std::string _entry_name = "";
 
             // Read size
             pack_file.read((char*)&_entry_size, PackFormat::ENTRY_TOTAL_SIZE_IN_BYTES);
+            _end_point = _entry_size;
+            _end_point -= PackFormat::ENTRY_TOTAL_SIZE_IN_BYTES;
             std::cout << "entry size = " << _entry_size << '\n';
 
             // Read entry name size
             pack_file.read((char*)&_entry_name_size, PackFormat::ENTRY_NAME_SIZE_IN_BYTES);
+            std::cout << "_entry_name_size = " << _entry_name_size << '\n';
+            _end_point -= PackFormat::ENTRY_NAME_SIZE_IN_BYTES;
 
-            // Read Entry name
+            // Name size check
+            if (access_path.size() != _entry_name_size)
+            {
+                pack_file.seekg(_end_point, std::ios::cur);
+                std::cout << "access_path size invalid.\n";
+                continue;
+            }
             
-            pack_file.read(_entry_name.data(), _entry_name_size - 1);
+            
+            // Read Entry name
+            _entry_name.resize(_entry_name_size);
+            pack_file.read(_entry_name.data(), _entry_name_size);
+            _end_point -= _entry_name_size;
+            std::cout << "_entry_name = " << _entry_name.data() << '\n';
 
+            // Name check
+            if (access_path != _entry_name)
+            {
+                pack_file.seekg(_end_point, std::ios::cur);
+                std::cout << "access_path invalid.\n";
+                continue;
+            }
+            
+            std::cout << "_end_point final = " << _end_point << '\n';
+            std::cout << "total entry meta data size = " << _entry_size - _end_point << '\n';
 
-            std::cout << _entry_name << '\n';
+            // Read data. By this point the decutions made to the _end_point represent the data size.
+            output_data.resize(_end_point);
+            pack_file.read(output_data.data(), output_data.size());
 
             if (encryption_flag == true)
             {
-                std::cout << "file encrypted = " << access_path << '\n';
+                size_t _key_size = _encryption_key.size();
+                for (size_t i = 0; i < output_data.size(); i++)
+                {
+                    output_data[i] ^= _encryption_key[i % _key_size];
+                }
+                std::cout << name << "decryption complete\n";
             }
+            break;
         }
-        
-
         return output_data;
     }
 
-    void close_resource_buffer()
+    LoadState close_resource_buffer()
     {
         priv::pack_file.close();
 
-        if (priv::continue_process)
+        if (priv::current_load_state == LoadState::Failed)
         {
-            std::cout << priv::name << "File closed successfully.\n";
+            std::cout << priv::name << "File closed. Process was halted due to earlier errors.\n";
+            priv::current_load_state = Failed;   
         }
         else
         {
-            std::cout << priv::name << "File closed. Process was halted due to earlier errors.\n";
+            std::cout << priv::name << "File closed successfully.\n";
+            priv::current_load_state = LoadState::Finished ;
         }
-    }
 
+        return priv::current_load_state;
+    }
 }

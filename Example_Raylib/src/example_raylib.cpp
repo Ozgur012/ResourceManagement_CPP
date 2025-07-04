@@ -14,16 +14,33 @@ int main()
 
 void test()
 {
+    InitWindow(600, 600, "");
+    SetTargetFPS(60);
+    InitAudioDevice();
     std::cout << "running test\n";
+
 
     rm::rLoader::init("resources.pk", "a"); // A path is supplied here. It is relative to your binary (exe).
 
     rm::rLoader::open_resource_buffer();
-    rm::rLoader::get_buffered_resource_data("");
+    std::vector<char> music_data = rm::rLoader::get_buffered_data("Assets/Audio/Music/Heavy Riffs - More Gain - Theme #2.wav");
     rm::rLoader::close_resource_buffer();
+    // Music
+    Music music = LoadMusicStreamFromMemory(".wav", (unsigned char*)music_data.data(), music_data.size());
+    PlayMusicStream(music);
 
+    while (!WindowShouldClose())
+    {
+        UpdateMusicStream(music);
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        EndDrawing();
+    }
+    CloseWindow();
 
     std::cout << "test finished...\n";
+
 }
 
 // void run()
