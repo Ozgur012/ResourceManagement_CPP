@@ -20,17 +20,17 @@ void test()
     std::cout << "running test\n";
 
 
-    rm::rLoader::init("resources.pk", "ioaosdjo"); // A path is supplied here. It is relative to your binary (exe).
-
+    
+    rm::rLdr::PackBuffer pack_buff = rm::rLdr::create_pack_buffer("resources.pk", "ioaosdjo");
 
     // Load Resources
     //================================================================
-    rm::rLoader::open_resource_buffer();
+    rm::rLdr::open_pack_buffer(pack_buff);
 
-    std::vector<char> music_data = rm::rLoader::get_buffered_data("Assets/Audio/Music/Heavy Riffs - More Gain - Theme #2.wav");
-    std::vector<char> img_data = rm::rLoader::get_buffered_data("Assets/Factory 64x64/PNG/gear 1.png");
+    std::vector<char> music_data = rm::rLdr::get_pack_data(pack_buff, "Assets/Audio/Music/Heavy Riffs - More Gain - Theme #2.wav");
+    std::vector<char> img_data = rm::rLdr::get_pack_data(pack_buff,"Assets/Factory 64x64/PNG/gear 1.png");
 
-    rm::rLoader::close_resource_buffer();
+    rm::rLdr::close_pack_buffer(pack_buff);
     //================================================================
 
 
