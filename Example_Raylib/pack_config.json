@@ -1,4 +1,8 @@
 {
+    "input_targets" : {
+        "res_pack1" : "F:/Projects/Cpp/ResourceManagement_cxx/Assets/pack1",
+        "res_pack2" : "F:/Projects/Cpp/ResourceManagement_cxx/Assets/pack2"
+    },
     "input_dir": "F:/Projects/Cpp/ResourceManagement_cxx/Assets",
     "output_dir_debug": "F:/Projects/Cpp/ResourceManagement_cxx/build/Example_Raylib/Debug",
     "output_dir_release": "F:/Projects/Cpp/ResourceManagement_cxx/build/Example_Raylib/Release",

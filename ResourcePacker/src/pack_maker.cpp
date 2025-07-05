@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <map>
 #include "rm_config.hpp"
 #include "error_checker.hpp"
 #include "nlohmann/json.hpp"
@@ -13,54 +14,59 @@ namespace rm::PackMaker
     {
         std::ifstream _json_file(pack_config_path);
         nlohmann::json pack_config_json = nlohmann::json::parse(_json_file);
-        std::filesystem::path _input_dir = pack_config_json["input_dir"];
+
+        
         std::string _output_dir = (build_type == "Release") ? pack_config_json["output_dir_release"] : pack_config_json["output_dir_debug"];
         std::string _encryption_key = pack_config_json["encryption_key"];
         std::cout << "_encryption_key: " << _encryption_key << "\n";
 
-        std::filesystem::path _resouce_pack_file_name = pack_config_json["resource_pack_file_name"];
+        std::map<std::string, std::string> input_targets = pack_config_json["input_targets"];
 
+        for (auto &kvp : input_targets)
+        {
+            std::filesystem::path _resource_pack_file_name = kvp.first;
+            std::filesystem::path _input_dir = kvp.second;
+            std::string resource_pack_file_path;
 
-        std::string resource_pack_file_path;
-        if (_resouce_pack_file_name.has_extension())
-        {
-            resource_pack_file_path =  _output_dir + "/" + _resouce_pack_file_name.generic_string();
-        } else{
-            resource_pack_file_path =  _output_dir + "/" + _resouce_pack_file_name.generic_string() + PackFormat::PACK_EXTENTION;
-        }
-        
-        std::vector<Private::PackEntry> pack_entires;
-        for (auto &item : std::filesystem::recursive_directory_iterator(_input_dir))
-        {
-            if (item.is_regular_file())
+            if (_resource_pack_file_name.has_extension())
             {
-                // CHECK IF EXTENSION IS SUPPORTED.
-                if (!rm::Config::is_supported_type(item.path().extension().string()))
+                resource_pack_file_path =  _output_dir + "/" + _resource_pack_file_name.generic_string();
+            } else{
+                resource_pack_file_path =  _output_dir + "/" + _resource_pack_file_name.generic_string() + PackFormat::PACK_EXTENTION;
+            }
+            
+            std::vector<Private::PackEntry> pack_entires;
+            for (auto &item : std::filesystem::recursive_directory_iterator(_input_dir))
+            {
+                if (item.is_regular_file())
                 {
-                    continue;
-                }
+                    // CHECK IF EXTENSION IS SUPPORTED.
+                    if (!rm::Config::is_supported_type(item.path().extension().string()))
+                    {
+                        continue;
+                    }
 
-                std::filesystem::path _access_path = _input_dir.stem().string() + "/" + item.path().lexically_relative(_input_dir).generic_string(); // Generic string must be used to ensure that the path usses "/" instead of "\\"
+                    std::filesystem::path _access_path = _input_dir.stem().string() + "/" + item.path().lexically_relative(_input_dir).generic_string(); // Generic string must be used to ensure that the path usses "/" instead of "\\"
+                    std::cout << "_access_path = " << _access_path << '\n';
 
-                uint8_t _access_path_size = static_cast<uint8_t>(_access_path.string().size());
+                    uint8_t _access_path_size = static_cast<uint8_t>(_access_path.string().size());
 
-                Private::PackEntry _entry
-                {
-                    .file_path =  item.path().string(),
-                    .entry_name_size = _access_path_size,
-                    .entry_name = _access_path.string()
-                };
-                
-                if (Private::_parse_binary_data(_entry, _encryption_key) == err::errFlags::Flags::SUCCESS)
-                {
-                    _entry.entry_total_size = PackFormat::ENTRY_CHUNK_FIXED_SIZE + _access_path_size + _entry.data.size();
-                    pack_entires.push_back(_entry);
+                    Private::PackEntry _entry
+                    {
+                        .file_path =  item.path().string(),
+                        .entry_name_size = _access_path_size,
+                        .entry_name = _access_path.string()
+                    };
+                    
+                    if (Private::_parse_binary_data(_entry, _encryption_key) == err::errFlags::Flags::SUCCESS)
+                    {
+                        _entry.entry_total_size = PackFormat::ENTRY_CHUNK_FIXED_SIZE + _access_path_size + _entry.data.size();
+                        pack_entires.push_back(_entry);
+                    }
                 }
             }
+            Private::_pack_binaries_to_resource_file(pack_entires, resource_pack_file_path, _encryption_key);
         }
-
-        Private::_pack_binaries_to_resource_file(pack_entires, resource_pack_file_path, _encryption_key);
-
     }
 }
 
