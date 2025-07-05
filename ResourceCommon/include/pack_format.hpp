@@ -4,29 +4,45 @@
 #include <cstdint>
 #include <string>
 
-namespace ResourceManagement::PackFormat
+// rm -> ResourceManagement
+namespace rm::PackFormat
 {
     // Default extension used for packed resource files (used if the user provides none).
-    inline constexpr std::string PACK_EXTENTION = ".pk";
+    inline constexpr const char* PACK_EXTENTION = ".pk";
+    // ===================== FILE DATA LAYOUT =====================
+    
+    // Number of bytes that store the encrytion flag (bool)
+    inline constexpr uint8_t ENCRYPTION_FLAG_SIZE = 1;
 
     // Number of bytes at the beginning of the file to store the total entry count (uint32_t).
     inline constexpr uint8_t FILE_ENTRY_COUNT_BYTE_SIZE = 4;
 
-    // Number of bytes used to store the length of an asset name (uint8_t).
-    // The name string follows this field, and its length is determined by this value.
-    inline constexpr uint8_t ENTRY_NAME_BYTE_SIZE = 1;
+    // ===================== ENTRY DATA LAYOUT =====================
+    // Number of bytes used to store the entry's id;
+    // inline constexpr uint8_t ENTRY_ID_SIZE_IN_BYTES = 4; DEPRICATED
 
     // Number of bytes used to store the total size of an entry (uint32_t).
     // This includes all components: metadata, name length, name, and data.
-    inline constexpr uint8_t ENTRY_TOTAL_SIZE_BYTE_SIZE = 4;
+    inline constexpr uint8_t ENTRY_TOTAL_SIZE_IN_BYTES = 4;
+
+    // Number of bytes used to store the length of an asset name (uint8_t).
+    // The name string follows this field, and its length is determined by this value.
+    inline constexpr uint8_t ENTRY_NAME_SIZE_IN_BYTES = 1;
 
     // Combined byte size of fixed metadata at the start of each entry.
-    // This does NOT include the name or data bytes — only the header fields.
-    inline constexpr uint8_t ENTRY_HEADER_FIXED_SIZE =
-        ENTRY_NAME_BYTE_SIZE + ENTRY_TOTAL_SIZE_BYTE_SIZE;
+    // This does NOT include the name or data bytes — only the header fields. 
+    // !IMPORTANT! To get the true size of the entry header the entry access name
+    // length must be added to the ENTRY_HEADER_FIXED_SIZE. This is not done here
+    // because entry name storage is allowed to be dynamic.
+    inline constexpr uint8_t ENTRY_CHUNK_FIXED_SIZE = ENTRY_TOTAL_SIZE_IN_BYTES + ENTRY_NAME_SIZE_IN_BYTES;
+
+    inline constexpr uint8_t FILE_META_DATA_SIZE = ENCRYPTION_FLAG_SIZE + FILE_ENTRY_COUNT_BYTE_SIZE;
+
+    // Off set of where to start encrption from.
+    
 
     // ENTRY_NAME_BYTE_SIZE: dynamic (N bytes)
-    // ENTRY_DATA_BYTE_SIZE: dynamic (M bytes)
+    // ENTRY_DATA_BYTE_SIZE: dynamic (N bytes)
 }
 
 /*

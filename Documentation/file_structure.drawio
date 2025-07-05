@@ -1,38 +1,17 @@
 <mxfile host="65bd71144e">
     <diagram id="6mdu5-0q2thFikblrOGj" name="Page-1">
-        <mxGraphModel dx="1324" dy="620" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="644" dy="689" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="13" value="" style="group" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="80" y="480" width="680" height="160" as="geometry"/>
-                </mxCell>
-                <mxCell id="14" value="" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#fad7ac;strokeColor=#b46504;" parent="13" vertex="1">
-                    <mxGeometry width="680" height="160" as="geometry"/>
-                </mxCell>
-                <mxCell id="15" value="1 byte&lt;div&gt;(entry_name_size)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="13" vertex="1">
-                    <mxGeometry x="40" y="60" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="16" value="4 bytes&lt;div&gt;(entry_total_size)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="13" vertex="1">
-                    <mxGeometry x="200" y="60" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="17" value="Single Entry Structure" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=25;" parent="13" vertex="1">
-                    <mxGeometry x="208" y="9" width="264" height="31" as="geometry"/>
-                </mxCell>
-                <mxCell id="18" value="Dynamic Allocation&lt;br&gt;&lt;div&gt;(entry_name)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="13" vertex="1">
-                    <mxGeometry x="360" y="60" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="19" value="Dynamic Allocation&lt;br&gt;&lt;div&gt;(entry_buffer)&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="13" vertex="1">
-                    <mxGeometry x="520" y="60" width="120" height="60" as="geometry"/>
-                </mxCell>
                 <mxCell id="21" value="" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#fad7ac;strokeColor=#b46504;" parent="1" vertex="1">
-                    <mxGeometry x="80" y="310" width="680" height="160" as="geometry"/>
+                    <mxGeometry x="40" y="300" width="760" height="160" as="geometry"/>
                 </mxCell>
                 <mxCell id="24" value="File Structure" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=25;" parent="1" vertex="1">
                     <mxGeometry x="288" y="319" width="264" height="31" as="geometry"/>
                 </mxCell>
                 <mxCell id="35" value="q" style="group" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="240" y="370" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="300" y="370" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="36" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="35" vertex="1">
                     <mxGeometry width="120" height="60" as="geometry"/>
@@ -56,7 +35,7 @@
                     <mxGeometry x="60" width="20" height="10" as="geometry"/>
                 </mxCell>
                 <mxCell id="44" value="q" style="group" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="360" y="370" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="420" y="370" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="45" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="44" vertex="1">
                     <mxGeometry width="120" height="60" as="geometry"/>
@@ -80,7 +59,7 @@
                     <mxGeometry x="60" width="20" height="10" as="geometry"/>
                 </mxCell>
                 <mxCell id="53" value="q" style="group" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="480" y="370" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="540" y="370" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="54" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="53" vertex="1">
                     <mxGeometry width="120" height="60" as="geometry"/>
@@ -104,7 +83,7 @@
                     <mxGeometry x="60" width="20" height="10" as="geometry"/>
                 </mxCell>
                 <mxCell id="61" value="q" style="group" parent="1" vertex="1" connectable="0">
-                    <mxGeometry x="600" y="370" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="660" y="370" width="120" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="62" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="61" vertex="1">
                     <mxGeometry width="120" height="60" as="geometry"/>
@@ -128,7 +107,31 @@
                     <mxGeometry x="60" width="20" height="10" as="geometry"/>
                 </mxCell>
                 <mxCell id="22" value="4 bytes&lt;div&gt;Entry Count&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="120" y="370" width="120" height="60" as="geometry"/>
+                    <mxGeometry x="180" y="370" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#fad7ac;strokeColor=#b46504;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="480" width="760" height="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Entry Name Size&lt;div&gt;1 byte&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="550" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="Entry Total Size&lt;div&gt;4 bytes&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="550" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Single Entry Structure" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=25;" parent="1" vertex="1">
+                    <mxGeometry x="288" y="500" width="264" height="31" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="Entry Name&lt;div&gt;N bytes&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="550" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="Entry Data&lt;div&gt;N bytes&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="550" y="550" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="72" value="1 byte&lt;div&gt;Encrption Flag&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="370" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="73" value="&lt;div&gt;NOTES:&lt;/div&gt;Entry Data size is not stored. It is to be calculated at runtime using the available metadata. Doing maths is faster than geting the data from memory." style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="120" y="630" width="370" height="60" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

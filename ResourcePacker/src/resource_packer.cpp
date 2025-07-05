@@ -7,10 +7,10 @@
 
 int main(int argc, char* argv[])
 {
-    ResourceManagement::ErrorChecker::Utils::_begin_log_buffer();
+    rm::err::Utils::_begin_log_buffer();
     if (argc < 2)
     {
-        ResourceManagement::CLI::show_no_command_given();
+        rm::CLI::show_no_command_given();
         return 0;
     }
 
@@ -22,15 +22,16 @@ int main(int argc, char* argv[])
     for (int i = 1; i < argc; ++i)
     {
         std::string arg = argv[i];
+        
 
         if (arg == "--help")
         {
-            ResourceManagement::CLI::show_help();
+            rm::CLI::show_help();
             return 0;
         }
         else if (arg == "--guide")
         {
-            ResourceManagement::CLI::show_resource_packing_guide();
+            rm::CLI::show_resource_packing_guide();
             return 0;
         }
         else if (arg == "--pack")
@@ -45,21 +46,21 @@ int main(int argc, char* argv[])
         {
             is_debug = true;
         }
-        else if (arg.ends_with(".json"))
+        else if (arg.size() >= 5 && arg.substr(arg.size() - 5) == ".json")
         {
             config_path = arg;
         }
         else
         {
-            ResourceManagement::CLI::show_unknown_command(arg);
+            rm::CLI::show_unknown_command(arg);
             return -1;
         }
     }
 
     if (is_release && is_debug)
     {
-        ResourceManagement::ErrorChecker::Utils::_log_error(
-            ResourceManagement::ErrorChecker::ErrorTypes::CONFIG,
+        rm::err::Utils::_log_error(
+            rm::err::ErrorTypes::CONFIG,
             "Cannot use both --release and --debug flags at the same time."
         );
         
@@ -70,8 +71,8 @@ int main(int argc, char* argv[])
     {
         if (config_path.empty())
         {
-            ResourceManagement::ErrorChecker::Utils::_log_error(
-                ResourceManagement::ErrorChecker::ErrorTypes::CONFIG,
+            rm::err::Utils::_log_error(
+                rm::err::ErrorTypes::CONFIG,
                 "No configuration file provided for --pack."
             );
             return -1;
@@ -80,23 +81,23 @@ int main(int argc, char* argv[])
         std::string build_type = is_release ? "Release" : "Debug";
         std::cout << "Packing in " << build_type << " mode.\n";
 
-        if (!ResourceManagement::Validator::is_valid_environment(config_path))
+        if (!rm::Validator::is_valid_environment(config_path))
         {
             return -1;
         }
 
-        ResourceManagement::ErrorChecker::Utils::_log_success(
-            ResourceManagement::ErrorChecker::SuccessTypes::VALIDATION,
+        rm::err::Utils::_log_success(
+            rm::err::SuccessTypes::VALIDATION,
             "Validation succeeded. Ready to pack resources..."
         );
 
-        ResourceManagement::PackMaker::make_resource_pack(config_path, build_type);
-        ResourceManagement::ErrorChecker::Utils::_end_log_bugger();
+        rm::PackMaker::make_resource_pack(config_path, build_type);
+        rm::err::Utils::_end_log_bugger();
         return 0;
     }
 
-    ResourceManagement::CLI::show_no_command_given();
-    ResourceManagement::ErrorChecker::Utils::_end_log_bugger();
+    rm::CLI::show_no_command_given();
+    rm::err::Utils::_end_log_bugger();
     
     return 0;
 }

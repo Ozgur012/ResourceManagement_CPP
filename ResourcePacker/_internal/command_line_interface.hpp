@@ -2,7 +2,7 @@
 #define RESOURCE_MANAGEMENT_COMMAND_LINE_INTERFACE_H
 #include <string>
 
-namespace ResourceManagement::CLI
+namespace rm::CLI
 {
     void show_unknown_command(const std::string &command);
 

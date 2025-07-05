@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace ResourceManagement::Validator
+namespace rm::Validator
 {
     // Validates the environment and configuration before packing resources.
     bool is_valid_environment(const std::string& config_path);
