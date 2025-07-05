@@ -44,10 +44,12 @@ namespace rm::PackMaker
 
                 uint8_t _access_path_size = static_cast<uint8_t>(_access_path.string().size());
 
-                Private::PackEntry _entry;
-                _entry.entry_name = _access_path.string();
-                _entry.entry_name_size = _access_path_size;
-                _entry.file_path =  item.path().string();
+                Private::PackEntry _entry
+                {
+                    .file_path =  item.path().string(),
+                    .entry_name_size = _access_path_size,
+                    .entry_name = _access_path.string()
+                };
                 
                 if (Private::_parse_binary_data(_entry, _encryption_key) == err::errFlags::Flags::SUCCESS)
                 {
@@ -92,12 +94,10 @@ namespace rm::PackMaker::Private
             if (!_encryption_key.empty())
             {
                 err::Utils::_log_success(err::SuccessTypes::FILE, "Applying encryption...");
-                size_t key_len = _encryption_key.size();
+                size_t key_len = _encryption_key.size();                
 
-                // Offset for file metadata. Name is dynamic so its size is added where needed as it is here.
-                size_t _meta_data_offset = PackFormat::ENTRY_CHUNK_FIXED_SIZE + pack_entry.entry_name_size;
-
-                for (size_t i = _meta_data_offset; i < pack_entry.data.size(); ++i)
+                // Meta data is not encrpyted, only the resource data.
+                for (size_t i = 0; i < pack_entry.data.size(); ++i)
                 {
                     pack_entry.data[i] ^= _encryption_key[i % key_len];
                 }

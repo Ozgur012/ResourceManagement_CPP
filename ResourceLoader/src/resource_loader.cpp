@@ -82,6 +82,9 @@ namespace rm::rLoader
     {
         using namespace priv;
 
+        std::cout << name << "requested path = " << access_path << '\n';
+        std::cout << name << "requested path size = " << access_path.size() << '\n';
+
         std::vector<char> output_data;
         
         uint32_t file_index;
@@ -110,18 +113,18 @@ namespace rm::rLoader
             pack_file.read((char*)&_entry_size, PackFormat::ENTRY_TOTAL_SIZE_IN_BYTES);
             _end_point = _entry_size;
             _end_point -= PackFormat::ENTRY_TOTAL_SIZE_IN_BYTES;
-            std::cout << "entry size = " << _entry_size << '\n';
+            //std::cout << "entry size = " << _entry_size << '\n';
 
             // Read entry name size
             pack_file.read((char*)&_entry_name_size, PackFormat::ENTRY_NAME_SIZE_IN_BYTES);
-            std::cout << "_entry_name_size = " << _entry_name_size << '\n';
+            //std::cout << "_entry_name_size = " << _entry_name_size << '\n';
             _end_point -= PackFormat::ENTRY_NAME_SIZE_IN_BYTES;
 
             // Name size check
             if (access_path.size() != _entry_name_size)
             {
                 pack_file.seekg(_end_point, std::ios::cur);
-                std::cout << "access_path size invalid.\n";
+                std::cout << "access_path size invalid. supplied = " << access_path.size() << ": current = " << _entry_name_size << '\n';
                 continue;
             }
             
@@ -140,8 +143,8 @@ namespace rm::rLoader
                 continue;
             }
             
-            std::cout << "_end_point final = " << _end_point << '\n';
-            std::cout << "total entry meta data size = " << _entry_size - _end_point << '\n';
+            // std::cout << "_end_point final = " << _end_point << '\n';
+            // std::cout << "total entry meta data size = " << _entry_size - _end_point << '\n';
 
             // Read data. By this point the decutions made to the _end_point represent the data size.
             output_data.resize(_end_point);
@@ -156,6 +159,7 @@ namespace rm::rLoader
                 }
                 std::cout << name << "decryption complete\n";
             }
+
             break;
         }
         return output_data;
@@ -172,7 +176,7 @@ namespace rm::rLoader
         }
         else
         {
-            std::cout << priv::name << "File closed successfully.\n";
+            std::cout << priv::name << "File closed successfully.\n\n";
             priv::current_load_state = LoadState::Finished ;
         }
 

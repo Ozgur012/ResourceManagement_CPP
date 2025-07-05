@@ -20,23 +20,41 @@ void test()
     std::cout << "running test\n";
 
 
-    rm::rLoader::init("resources.pk", "a"); // A path is supplied here. It is relative to your binary (exe).
+    rm::rLoader::init("resources.pk", "ioaosdjo"); // A path is supplied here. It is relative to your binary (exe).
 
+
+    // Load Resources
+    //================================================================
     rm::rLoader::open_resource_buffer();
+
     std::vector<char> music_data = rm::rLoader::get_buffered_data("Assets/Audio/Music/Heavy Riffs - More Gain - Theme #2.wav");
+    std::vector<char> img_data = rm::rLoader::get_buffered_data("Assets/Factory 64x64/PNG/gear 1.png");
+
     rm::rLoader::close_resource_buffer();
-    // Music
+    //================================================================
+
+
+
     Music music = LoadMusicStreamFromMemory(".wav", (unsigned char*)music_data.data(), music_data.size());
+
+    Image img = LoadImageFromMemory(".png", (unsigned char*)img_data.data(), img_data.size());
+    Texture2D texture = LoadTextureFromImage(img);
+    UnloadImage(img);
+
+    
     PlayMusicStream(music);
 
     while (!WindowShouldClose())
     {
         UpdateMusicStream(music);
         BeginDrawing();
-        ClearBackground(BLACK);
+        ClearBackground(DARKBLUE);
+        DrawTexture(texture, 0, 0, WHITE);
 
         EndDrawing();
     }
+    UnloadTexture(texture);
+    UnloadMusicStream(music);
     CloseWindow();
 
     std::cout << "test finished...\n";

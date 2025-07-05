@@ -19,7 +19,7 @@ namespace rm::PackFormat
 
     // ===================== ENTRY DATA LAYOUT =====================
     // Number of bytes used to store the entry's id;
-    inline constexpr uint8_t ENTRY_ID_SIZE_IN_BYTES = 4;
+    // inline constexpr uint8_t ENTRY_ID_SIZE_IN_BYTES = 4; DEPRICATED
 
     // Number of bytes used to store the total size of an entry (uint32_t).
     // This includes all components: metadata, name length, name, and data.
@@ -34,7 +34,7 @@ namespace rm::PackFormat
     // !IMPORTANT! To get the true size of the entry header the entry access name
     // length must be added to the ENTRY_HEADER_FIXED_SIZE. This is not done here
     // because entry name storage is allowed to be dynamic.
-    inline constexpr uint8_t ENTRY_CHUNK_FIXED_SIZE = ENTRY_ID_SIZE_IN_BYTES + ENTRY_TOTAL_SIZE_IN_BYTES + ENTRY_NAME_SIZE_IN_BYTES;
+    inline constexpr uint8_t ENTRY_CHUNK_FIXED_SIZE = ENTRY_TOTAL_SIZE_IN_BYTES + ENTRY_NAME_SIZE_IN_BYTES;
 
     inline constexpr uint8_t FILE_META_DATA_SIZE = ENCRYPTION_FLAG_SIZE + FILE_ENTRY_COUNT_BYTE_SIZE;
 
