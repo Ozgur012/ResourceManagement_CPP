@@ -4,15 +4,17 @@
 #include <fstream>
 #include <filesystem>
 
-void test();
+void test_raylib_and_resources();
+void test_raylib_only();
 
 int main()
 {
-    test();
+    test_raylib_and_resources();
+    //test_raylib_only();
     return 0;
 }
 
-void test()
+void test_raylib_and_resources()
 {
     InitWindow(600, 600, "");
     SetTargetFPS(60);
@@ -68,53 +70,20 @@ void test()
 
 }
 
-// void run()
-// {
-//     InitWindow(800, 800, "");
-//     InitAudioDevice();
-//     SetTargetFPS(60);
+void test_raylib_only()
+{
+    InitWindow(800, 800, "");
+    SetTargetFPS(60);
 
-//     rm::rLoader::init("resources.pk"); // A path is supplied here. It is relative to your binary (exe).
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+        ClearBackground(DARKBLUE);
+        
 
-//     // Loading resources
-
-//     // Access name example:
-//     //      Input dir: c:/Projects/MyAwsomegame/Assets
-//     //      Packed file: c:/Projects/MyAwsomegame/Assets/Textures/Player/player.png
-//     //      Access name: Assets/Textures/Player/player.png
-
-//     // Texture
-//     std::vector<char> img_data = rm::rLoader::get_raw_resource_data("access name of your png");
-//     Image img = LoadImageFromMemory(".png", (unsigned char*)img_data.data(), img_data.size());
-//     Texture2D texture = LoadTextureFromImage(img);
-//     UnloadImage(img);
-
-//     // Music
-//     std::vector<char> music_data = rm::rLoader::get_raw_resource_data("Assets/Audio/Music/TetrisSongOGG.ogg");
-//     Music music = LoadMusicStreamFromMemory(".ogg", (unsigned char*)music_data.data(), music_data.size());
-//     PlayMusicStream(music);
+        EndDrawing();
+    }
     
-//     // Sound
-//     std::vector<char> sound_data = rm::rLoader::get_raw_resource_data("access name of your wav");
-//     Wave s_wave = LoadWaveFromMemory(".wav", (unsigned char*)sound_data.data(), sound_data.size());
-//     Sound sound = LoadSoundFromWave(s_wave);
-
-//     while (!WindowShouldClose())
-//     {
-//         if (IsKeyPressed(KEY_SPACE))
-//         {
-//             PlaySound(sound);
-//         }
-//         UpdateMusicStream(music);
-
-//         BeginDrawing();
-//         ClearBackground(DARKBLUE);
-//         DrawTexture(texture, 0, 0, WHITE);
-
-//         EndDrawing();
-//     }
     
-//     UnloadTexture(texture);
-//     UnloadMusicStream(music);
-//     CloseWindow();
-// }
+    CloseWindow();
+}
