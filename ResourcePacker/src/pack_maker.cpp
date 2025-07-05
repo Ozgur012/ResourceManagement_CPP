@@ -51,12 +51,11 @@ namespace rm::PackMaker
 
                     uint8_t _access_path_size = static_cast<uint8_t>(_access_path.string().size());
 
-                    Private::PackEntry _entry
-                    {
-                        .file_path =  item.path().string(),
-                        .entry_name_size = _access_path_size,
-                        .entry_name = _access_path.string()
-                    };
+                    Private::PackEntry _entry;
+                    _entry.file_path =  item.path().string();
+                    _entry.entry_name_size = _access_path_size;
+                    _entry.entry_name = _access_path.string();
+                    
                     
                     if (Private::_parse_binary_data(_entry, _encryption_key) == err::errFlags::Flags::SUCCESS)
                     {
