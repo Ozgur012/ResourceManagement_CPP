@@ -18,30 +18,37 @@ void test()
     SetTargetFPS(60);
     InitAudioDevice();
     std::cout << "running test\n";
+    std::vector<char> music_data;
+    std::vector<char> img_data;
 
+    // Pack 1
+    {
+        rm::rLdr::PackBuffer pack_1 = rm::rLdr::create_pack_buffer("res_pack1.pk", "ioaosdjo");
 
+        rm::rLdr::open_pack_buffer(pack_1);
+
+        music_data = rm::rLdr::get_pack_data(pack_1, "pack1/Audio/Music/Heavy Riffs - More Gain - Theme #2.wav");
+
+        rm::rLdr::close_pack_buffer(pack_1);
+    }
+
+    // Pack 2
+    {
+        rm::rLdr::PackBuffer pack_2 = rm::rLdr::create_pack_buffer("res_pack2.pk", "ioaosdjo");
+
+        rm::rLdr::open_pack_buffer(pack_2);
+
+        img_data = rm::rLdr::get_pack_data(pack_2,"pack2/Textures/ammo/ammo_02.png");
+
+        rm::rLdr::close_pack_buffer(pack_2);
+    }
     
-    rm::rLdr::PackBuffer pack_buff = rm::rLdr::create_pack_buffer("resources.pk", "ioaosdjo");
-
-    // Load Resources
-    //================================================================
-    rm::rLdr::open_pack_buffer(pack_buff);
-
-    std::vector<char> music_data = rm::rLdr::get_pack_data(pack_buff, "Assets/Audio/Music/Heavy Riffs - More Gain - Theme #2.wav");
-    std::vector<char> img_data = rm::rLdr::get_pack_data(pack_buff,"Assets/Factory 64x64/PNG/gear 1.png");
-
-    rm::rLdr::close_pack_buffer(pack_buff);
-    //================================================================
-
-
-
     Music music = LoadMusicStreamFromMemory(".wav", (unsigned char*)music_data.data(), music_data.size());
 
     Image img = LoadImageFromMemory(".png", (unsigned char*)img_data.data(), img_data.size());
     Texture2D texture = LoadTextureFromImage(img);
     UnloadImage(img);
 
-    
     PlayMusicStream(music);
 
     while (!WindowShouldClose())
