@@ -6,7 +6,7 @@ Resource Management C++ is a lightweight, modular system for packing and loading
 ## How It Works
 The system is split into two components:
 
-Resource Packer (CLI tool): Reads a JSON config file, collects files from multiple target folders, optionally encrypts them, and produces one or more binary .pk pack files.
+Resource Packer (CLI tool): Reads a JSON config file, collects files from multiple target folders, optionally encrypts them, and produces one or more binary .pk pack files for each of the keys specified in the "input_targets" of the config json.
 
 Resource Loader (Library): Loads any of the generated .pk files at runtime, decrypts them if needed, and gives direct access to individual assets via simple API calls.
 
