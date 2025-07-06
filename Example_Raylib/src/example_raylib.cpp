@@ -19,7 +19,7 @@ void test_raylib_and_resources()
     InitWindow(600, 600, "");
     SetTargetFPS(60);
     InitAudioDevice();
-    std::cout << "running test\n";
+    
     std::vector<char> music_data;
     std::vector<char> img_data;
 

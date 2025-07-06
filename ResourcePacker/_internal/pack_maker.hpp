@@ -22,9 +22,9 @@ namespace rm::PackMaker::Private
         uint32_t entry_data_size;
     };
     
-    inline err::errFlags::Flags _parse_binary_data(Private::PackEntry &pack_entry, std::string &_encryption_key);
+    inline err::errFlags::Flags _parse_binary_data(Private::PackEntry &pack_entry, std::string &_encryption_key, std::vector<std::string> &_files_failed_to_open);
 
-    void _pack_binaries_to_resource_file(std::vector<PackEntry> &pack_entries, std::string _res_file_path, std::string &_encryption_key);
+    void _pack_binaries_to_resource_file(std::vector<PackEntry> &pack_entries, std::filesystem::path _res_file_path, std::string &_encryption_key);
 }
 
 #endif // RESOURCE_MANAGEMENT_PACK_MAKER_H

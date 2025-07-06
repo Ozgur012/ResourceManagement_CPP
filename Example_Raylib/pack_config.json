@@ -3,10 +3,8 @@
         "res_pack1" : "F:/Projects/Cpp/ResourceManagement_cxx/Assets/pack1",
         "res_pack2" : "F:/Projects/Cpp/ResourceManagement_cxx/Assets/pack2"
     },
-    "input_dir": "F:/Projects/Cpp/ResourceManagement_cxx/Assets",
-    "output_dir_debug": "F:/Projects/Cpp/ResourceManagement_cxx/build/Visual Studio Community 2022 Release - amd64/Example_Raylib/Debug",
-    "output_dir_release": "F:/Projects/Cpp/ResourceManagement_cxx/build/Visual Studio Community 2022 Release - amd64/Example_Raylib/Release",
-    "output_sub_dir": "",
-    "resource_pack_file_name": "resources.pk",
+    "output_dir_debug": "F:/Projects/Cpp/ResourceManagement_cxx/build/Ninja Multi/Example_Raylib/Debug",
+    "output_dir_release": "F:/Projects/Cpp/ResourceManagement_cxx/build/Ninja Multi/Example_Raylib/Release",
+    "output_sub_dir": "data",
     "encryption_key" : "ioaosdjo"
 }
