@@ -22,13 +22,15 @@ This lets you manage and load multiple independent resource packs as needed, giv
         "output_dir_debug": "C:/MyProjects/AwesomeGame/build/Example/Debug",
         "output_dir_release": "C:/MyProjects/AwesomeGame/build/Example/Release",
         "output_sub_dir": "my_sub_directory",
-        "encryption_key" : "my-encryption_key"
+        "encryption_key" : "my-encryption_key123456789"
     }
 
+### Suported file types
+
+    .png, .jpg, .jpeg, .ogg, .wav, .mp3
 
 ## Example
 
-    include <iostream>
     include "raylib.h"
     include "resource_loader.hpp"
     
@@ -39,35 +41,41 @@ This lets you manage and load multiple independent resource packs as needed, giv
         InitAudioDevice();
         
         std::vector<char> music_data;
-        std::vector<char> img_data;
+        std::vector<char> player_img_data;
+        std::vector<char> enemy_img_data;
     
         // Pack 1
         {
-            rm::rLdr::PackBuffer pack_1 = rm::rLdr::create_pack_buffer("res_pack1.pk", "ioaosdjo");
+            rm::rLdr::PackBuffer pack_1 = rm::rLdr::create_pack_buffer("my_sub_directory/res_pack1.pk", "my-encryption_key123456789");
     
             rm::rLdr::open_pack_buffer(pack_1);
     
-            music_data = rm::rLdr::get_pack_data(pack_1, "pack1/Audio/Music/Heavy Riffs - More Gain - Theme #2.wav");
+            music_data = rm::rLdr::get_pack_data(pack_1, "pack1/Audio/awesome_song.wav");
     
             rm::rLdr::close_pack_buffer(pack_1);
         }
     
         // Pack 2
         {
-            rm::rLdr::PackBuffer pack_2 = rm::rLdr::create_pack_buffer("res_pack2.pk", "ioaosdjo");
+            rm::rLdr::PackBuffer pack_2 = rm::rLdr::create_pack_buffer("my_sub_directory/res_pack2.pk", "my-encryption_key123456789");
     
             rm::rLdr::open_pack_buffer(pack_2);
     
-            img_data = rm::rLdr::get_pack_data(pack_2,"pack2/Textures/ammo/ammo_02.png");
+            player_img_data = rm::rLdr::get_pack_data(pack_2,"pack2/Textures/Player/player_texture.png");
+            enemy_img_data = rm::rLdr::get_pack_data(pack_2,"pack2/Textures/Enemy/enemy_texture.png");
     
             rm::rLdr::close_pack_buffer(pack_2);
         }
         
         Music music = LoadMusicStreamFromMemory(".wav", (unsigned char*)music_data.data(), music_data.size());
     
-        Image img = LoadImageFromMemory(".png", (unsigned char*)img_data.data(), img_data.size());
-        Texture2D texture = LoadTextureFromImage(img);
-        UnloadImage(img);
+        Image player_img = LoadImageFromMemory(".png", (unsigned char*)player_img_data.data(), player_img_data.size());
+        Texture2D player_texture = LoadTextureFromImage(player_img);
+        UnloadImage(player_img);
+
+        Image enemy_img = LoadImageFromMemory(".png", (unsigned char*)enemy_img_data.data(), enemy_img_data.size());
+        Texture2D enemy_texture = LoadTextureFromImage(enemy_img);
+        UnloadImage(enemy_img);
     
         PlayMusicStream(music);
     
@@ -76,15 +84,14 @@ This lets you manage and load multiple independent resource packs as needed, giv
             UpdateMusicStream(music);
             BeginDrawing();
             ClearBackground(DARKBLUE);
-            DrawTexture(texture, 0, 0, WHITE);
-    
+            DrawTexture(player_texture, 0, 0, WHITE);
+            DrawTexture(enemy_texture, 0, 200, WHITE);
             EndDrawing();
         }
-        UnloadTexture(texture);
         UnloadMusicStream(music);
+        UnloadTexture(player_texture);
+        UnloadTexture(enemy_texture);
         CloseWindow();
-    
-        std::cout << "test finished...\n";
         
         return 0;
     }
