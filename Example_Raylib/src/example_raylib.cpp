@@ -1,20 +1,8 @@
 #include <iostream>
 #include "raylib.h"
 #include "resource_loader.hpp"
-#include <fstream>
-#include <filesystem>
-
-void test_raylib_and_resources();
-void test_raylib_only();
 
 int main()
-{
-    test_raylib_and_resources();
-    //test_raylib_only();
-    return 0;
-}
-
-void test_raylib_and_resources()
 {
     InitWindow(600, 600, "");
     SetTargetFPS(60);
@@ -67,23 +55,6 @@ void test_raylib_and_resources()
     CloseWindow();
 
     std::cout << "test finished...\n";
-
-}
-
-void test_raylib_only()
-{
-    InitWindow(800, 800, "");
-    SetTargetFPS(60);
-
-    while (!WindowShouldClose())
-    {
-        BeginDrawing();
-        ClearBackground(DARKBLUE);
-        
-
-        EndDrawing();
-    }
     
-    
-    CloseWindow();
+    return 0;
 }
