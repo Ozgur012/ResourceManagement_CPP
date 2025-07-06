@@ -1,9 +1,10 @@
 # ResourceManagement_CPP
 
 ## Example
-#include <iostream>
-#include "raylib.h"
-#include "resource_loader.hpp"
+
+include <iostream>
+include "raylib.h"
+include "resource_loader.hpp"
 
 int main()
 {
