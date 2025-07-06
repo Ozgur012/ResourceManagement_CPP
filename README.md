@@ -3,7 +3,7 @@
     {
         "input_targets" : {
             "res_pack1" : "C:/MyProjects/AwesomeGame/Assets/pack1",
-            "res_pack2" : "C:/MyProjects/AwesomeGame/Assets/pack1"
+            "res_pack2" : "C:/MyProjects/AwesomeGame/Assets/pack2"
         },
         "output_dir_debug": "C:/MyProjects/AwesomeGame/build/Example/Debug",
         "output_dir_release": "C:/MyProjects/AwesomeGame/build/Example/Release",
