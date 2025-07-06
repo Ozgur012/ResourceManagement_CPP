@@ -12,6 +12,9 @@ Resource Loader (Library): Loads any of the generated .pk files at runtime, decr
 
 This lets you manage and load multiple independent resource packs as needed, giving you flexibility over how assets are bundled and accessed.
 
+### Simple Example project
+    https://github.com/ozgur-kalay/Resource_Management_CPP_Example
+
 ### Example Json config file.
 
     {
