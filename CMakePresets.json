@@ -2,24 +2,50 @@
     "version": 4,
     "buildPresets": [
         {
-            "name": "x64Debug",
+            "name": "Visual Studio Community 2022 Release - amd64-debug",
+            "displayName": "Visual Studio Community 2022 Release - amd64 - Debug",
+            "configurePreset": "Visual Studio Community 2022 Release - amd64",
+            "configuration": "Debug"
+        },
+        {
+            "name": "Visual Studio Community 2022 Release - amd64-Release",
+            "displayName": "Visual Studio Community 2022 Release - amd64 - Release",
+            "configurePreset": "Visual Studio Community 2022 Release - amd64",
+            "configuration": "Release"
+        },
+        {
+            "name": "Ninja Debug Build Preset",
             "configuration": "Debug",
             "configurePreset": "Ninja Multi"
         },
         {
-            "name": "x64Release",
+            "name": "Ninja Release Build Preset",
             "configuration": "Release",
             "configurePreset": "Ninja Multi"
         }
     ],
     "configurePresets": [
         {
+            "name": "Visual Studio Community 2022 Release - amd64",
+            "displayName": "Visual Studio Community 2022 Release - amd64",
+            "description": "Using compilers for Visual Studio 17 2022 (x64 architecture)",
+            "generator": "Visual Studio 17 2022",
+            "toolset": "host=x64",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe"
+            }
+        },
+        {
             "name": "Ninja Multi",
-            "binaryDir": "${sourceDir}/build",
+            "binaryDir": "${sourceDir}/build/${presetName}",
             "generator": "Ninja Multi-Config",
             "cacheVariables": {
-                "CMAKE_C_COMPILER" : "clang",
-                "CMAKE_CXX_COMPILER" : "clang++"
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
             }
         }
     ]

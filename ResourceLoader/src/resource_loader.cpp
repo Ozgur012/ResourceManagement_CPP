@@ -7,20 +7,12 @@
 #include "error_checker.hpp"
 #include "pack_format.hpp"
 
-
 namespace rm::rLdr
 {
     namespace priv
     {
         std::string name = "RESOURCE_LOADER:";
-
-        // LoadState current_load_state = LoadState::NONE; // See header for LoadState
-        // std::string _res_pack_path;
-        // std::string _encryption_key;
-        // bool encryption_flag = false;
-        // std::ifstream pack_file;
-        // uint32_t entry_count;
-        // std::vector<uint32_t> consumed_ids;
+        uint32_t success_count = 0;
     }
     
     PackBuffer create_pack_buffer(std::string res_pack_path, std::string encryption_key)
@@ -28,13 +20,12 @@ namespace rm::rLdr
         PackBuffer pb;
         pb._res_pack_path = res_pack_path;
         pb._encryption_key = encryption_key;
-
-        std::cout << priv::name << "priv::_encryption_key = " << pb._encryption_key << '\n';
         return pb;
     }
 
     LoadState open_pack_buffer(PackBuffer &pb)
     {
+        std::cout << '\n' << "==================== RESOURCE LOADER START ====================" << '\n';
         pb.pack_file.exceptions(std::ios::badbit | std::ios::failbit);
 
         try
@@ -65,11 +56,8 @@ namespace rm::rLdr
 
         pb.pack_file.read((char*)&pb.entry_count, PackFormat::FILE_ENTRY_COUNT_BYTE_SIZE);
         
-        std::cout << '\n';
-        std::cout << priv::name << "Buffer open successfully. Ready to extract data..." << '\n';
-        std::cout << priv::name << "Call get_buffered_resource_data() to extract individual resources." << '\n';
-        std::cout << priv::name << "Once all required data is extracted must call close_resource_buffer()." << '\n';
-        std::cout << '\n';
+        std::cout << priv::name << "Buffer open successfully at: " << pb._res_pack_path << '\n';
+        std::cout << priv::name << "Ready to extract data..." << '\n';
 
         pb.current_load_state = LoadState::Begin;
 
@@ -79,9 +67,6 @@ namespace rm::rLdr
     std::vector<char> get_pack_data(PackBuffer &pb, std::string access_path)
     {
         using namespace priv;
-
-        std::cout << name << "requested path = " << access_path << '\n';
-        std::cout << name << "requested path size = " << access_path.size() << '\n';
 
         std::vector<char> output_data;
         
@@ -111,18 +96,15 @@ namespace rm::rLdr
             pb.pack_file.read((char*)&_entry_size, PackFormat::ENTRY_TOTAL_SIZE_IN_BYTES);
             _end_point = _entry_size;
             _end_point -= PackFormat::ENTRY_TOTAL_SIZE_IN_BYTES;
-            //std::cout << "entry size = " << _entry_size << '\n';
 
             // Read entry name size
             pb.pack_file.read((char*)&_entry_name_size, PackFormat::ENTRY_NAME_SIZE_IN_BYTES);
-            //std::cout << "_entry_name_size = " << _entry_name_size << '\n';
             _end_point -= PackFormat::ENTRY_NAME_SIZE_IN_BYTES;
 
             // Name size check
             if (access_path.size() != _entry_name_size)
             {
                 pb.pack_file.seekg(_end_point, std::ios::cur);
-                std::cout << "access_path size invalid. supplied = " << access_path.size() << ": current = " << _entry_name_size << '\n';
                 continue;
             }
             
@@ -131,20 +113,18 @@ namespace rm::rLdr
             _entry_name.resize(_entry_name_size);
             pb.pack_file.read(_entry_name.data(), _entry_name_size);
             _end_point -= _entry_name_size;
-            std::cout << "_entry_name = " << _entry_name.data() << '\n';
 
             // Name check
             if (access_path != _entry_name)
             {
                 pb.pack_file.seekg(_end_point, std::ios::cur);
-                std::cout << "access_path invalid.\n";
+                std::cout << priv::name << "Invalid access path: " << access_path << '\n';
                 continue;
             }
-            
-            // std::cout << "_end_point final = " << _end_point << '\n';
-            // std::cout << "total entry meta data size = " << _entry_size - _end_point << '\n';
 
+            std::cout << priv::name << "VALID access path: " << access_path << '\n';
             // Read data. By this point the decutions made to the _end_point represent the data size.
+            priv::success_count++;
             output_data.resize(_end_point);
             pb.pack_file.read(output_data.data(), output_data.size());
 
@@ -155,7 +135,6 @@ namespace rm::rLdr
                 {
                     output_data[i] ^= pb._encryption_key[i % _key_size];
                 }
-                std::cout << name << "decryption complete\n";
             }
 
             break;
@@ -174,10 +153,13 @@ namespace rm::rLdr
         }
         else
         {
-            std::cout << priv::name << "File closed successfully.\n\n";
+            std::cout << priv::name << "File closed successfully.\n";
             pb.current_load_state = LoadState::Finished ;
         }
 
+        std::cout << priv::name << "Succesfully loaded: " << std::to_string(priv::success_count) << " file(s).\n";
+        std::cout << "=================== RESOURCE LOADER FINISHED ==================" << '\n';
+        priv::success_count = 0;
         return pb.current_load_state;
     }
 }

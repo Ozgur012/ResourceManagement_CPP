@@ -14,14 +14,14 @@ namespace rm::Config
             if (extention == sprted_type)
             {
                 result = true;
-                std::cout << "\nrm::Config : file extention = " << extention << " : is supported\n";
+                //std::cout << "\nrm::Config : file extention = " << extention << " : is supported\n";
             }
         }
 
-        if (!result)
-        {
-            std::cout << "\nrm::Config : file extention = " << extention << " : is NOT supported\n";
-        }
+        // if (!result)
+        // {
+        //     std::cout << "\nrm::Config : file extention = " << extention << " : is NOT supported\n";
+        // }
 
         return result;
     }

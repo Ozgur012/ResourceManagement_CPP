@@ -1,5 +1,6 @@
 #include "error_checker.hpp"
 #include "nlohmann/json.hpp"
+#include <iostream>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -72,10 +73,10 @@ namespace rm::err::Environment
             return false;
         }
 
-        nlohmann::json data;
+        nlohmann::json json_data;
         try
         {
-            data = nlohmann::json::parse(file);
+            json_data = nlohmann::json::parse(file);
         }
         catch (const std::exception& e)
         {
@@ -91,7 +92,7 @@ namespace rm::err::Environment
         bool result = true;
 
         auto check_key = [&](const std::string& key) {
-            if (!data.contains(key)) {
+            if (!json_data.contains(key)) {
                 result = false;
                 rm::err::Utils::_log_error(
                     rm::err::ErrorTypes::VALIDATION,
@@ -100,16 +101,15 @@ namespace rm::err::Environment
             }
         };
 
-        check_key(rm::err::Private::input_dir);
+        check_key(rm::err::Private::input_targets);
         check_key(rm::err::Private::output_dir_debug);
         check_key(rm::err::Private::output_dir_release);
-        check_key(rm::err::Private::resource_pack_file_name);
         check_key(rm::err::Private::encryption_key);
 
         // Encryption
-        if (data.contains(rm::err::Private::encryption_key) 
-                && data[rm::err::Private::encryption_key].is_string() 
-                && data[rm::err::Private::encryption_key].get<std::string>().empty()) {
+        if (json_data.contains(rm::err::Private::encryption_key) 
+                && json_data[rm::err::Private::encryption_key].is_string() 
+                && json_data[rm::err::Private::encryption_key].get<std::string>().empty()) {
                     
                     rm::err::EncryptionFlag::apply_encryption = false;
 
@@ -125,17 +125,34 @@ namespace rm::err::Environment
         if (result)
         {
             auto check_dir = [&](const std::string& key) {
-                const std::string& dir = data[key].get<std::string>();
-                if (!std::filesystem::exists(dir)) {
-                    result = false;
-                    rm::err::Utils::_log_error(
-                        rm::err::ErrorTypes::PATH,
-                        "Directory path in \"" + key + "\" does not exist: \"" + dir + "\""
-                    );
+                if (key == rm::err::Private::input_targets)
+                {
+                    std::map<std::string, std::string> _packs = json_data[key];   
+                    for (auto &kvp : _packs)
+                    {
+                        if (!std::filesystem::exists(kvp.second))
+                        {
+                            result = false;
+                            rm::err::Utils::_log_error(
+                                rm::err::ErrorTypes::PATH,
+                                "Directory path in \"" + key + "\" for: \"" + kvp.first + "\" does not exist at: \"" + kvp.second + "\""
+                            );
+                        }
+                    }
+
+                } else {
+                    const std::string& dir = json_data[key].get<std::string>();
+                    if (!std::filesystem::exists(dir)) {
+                        result = false;
+                        rm::err::Utils::_log_error(
+                            rm::err::ErrorTypes::PATH,
+                            "Directory path in \"" + key + "\" does not exist: \"" + dir + "\""
+                        );
+                    }
                 }
             };
 
-            check_dir(rm::err::Private::input_dir);
+            check_dir(rm::err::Private::input_targets);
             check_dir(rm::err::Private::output_dir_debug);
             check_dir(rm::err::Private::output_dir_release);
         }

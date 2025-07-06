@@ -14,6 +14,12 @@ namespace rm::err::Utils
         std::cout << "\n========RESOURCE_PACKER_START===========================================\n";
     }
 
+    void _log_info(const std::string &message)
+    {
+        if (!message.empty())
+            std::cout << '\n' << "[INFO]" << message;
+    }
+
     void _log_error(const std::string& type, const std::string& message)
     {
         if (!message.empty())

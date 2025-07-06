@@ -4,6 +4,8 @@
 
 namespace rm::CLI
 {
+    int run(int argc, char* argv[]);
+    
     void show_unknown_command(const std::string &command);
 
     void show_no_command_given();

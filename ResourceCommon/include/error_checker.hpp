@@ -16,10 +16,9 @@ namespace rm::err::EncryptionFlag
 
 namespace rm::err::Private
 {
-    inline const std::string input_dir = "input_dir";
+    inline const std::string input_targets = "input_targets";
     inline const std::string output_dir_debug = "output_dir_debug";
     inline const std::string output_dir_release = "output_dir_release";
-    inline const std::string resource_pack_file_name = "resource_pack_file_name";
     inline const std::string encryption_key = "encryption_key";
 }
 
@@ -48,6 +47,7 @@ namespace rm::err::Utils
     void _unixify_path(std::string &path);
 
     void _begin_log_buffer();
+    void _log_info(const std::string &message);
     void _log_error(const std::string& type, const std::string& message);
     void _log_success(const std::string& type, const std::string& message);
     void _end_log_bugger();

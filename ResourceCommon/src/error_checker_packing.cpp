@@ -14,7 +14,6 @@ namespace rm::err::Packing
         else
         {
             std::cout << "\r\033[K" << prefix << " SUCCESS: " << message << std::flush;
-            
         }
     }
 }
