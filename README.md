@@ -1,7 +1,7 @@
 # ResourceManagement_CPP
 
 ## Welcome
-Resource Management C++ is a lightweight, modular system for packing and loading game assets in binary form. Designed for simplicity, portability, and performance, it provides a CLI-based resource packer and a runtime loader library to streamline asset distribution and access in your C++ game or application.
+**Resource Management C++** is a lightweight, modular system for packing and loading game assets in binary form. Designed for simplicity, portability, and performance, it provides a CLI-based resource packer and a runtime loader library to streamline asset distribution and access in your C++ game or application.
 
 ## How It Works
 The system is split into two components:
@@ -31,8 +31,8 @@ This lets you manage and load multiple independent resource packs as needed, giv
 
 ## Example
 
-    include "raylib.h"
-    include "resource_loader.hpp"
+    #include "raylib.h"
+    #include "resource_loader.hpp"
     
     int main()
     {
@@ -46,7 +46,7 @@ This lets you manage and load multiple independent resource packs as needed, giv
     
         // Pack 1
         {
-            rm::rLdr::PackBuffer pack_1 = rm::rLdr::create_pack_buffer("my_sub_directory/res_pack1.pk", "my-encryption_key123456789");
+            auto pack_1 = rm::rLdr::create_pack_buffer("my_sub_directory/res_pack1.pk", "my-encryption_key123456789");
     
             rm::rLdr::open_pack_buffer(pack_1);
     
@@ -57,7 +57,7 @@ This lets you manage and load multiple independent resource packs as needed, giv
     
         // Pack 2
         {
-            rm::rLdr::PackBuffer pack_2 = rm::rLdr::create_pack_buffer("my_sub_directory/res_pack2.pk", "my-encryption_key123456789");
+            auto pack_2 = rm::rLdr::create_pack_buffer("my_sub_directory/res_pack2.pk", "my-encryption_key123456789");
     
             rm::rLdr::open_pack_buffer(pack_2);
     
