@@ -1,7 +1,7 @@
 # ResourceManagement_CPP
 
 ## Welcome
-**Resource Management C++** is a lightweight, modular system for packing and loading game assets in binary form. Designed for simplicity, portability, and performance, it provides a CLI-based resource packer and a runtime loader library to streamline asset distribution and access in your C++ game or application.
+Resource Management C++ is a lightweight, modular system for packing and loading game assets in binary form. Designed for simplicity, portability, and performance, it provides a CLI-based resource packer and a runtime loader library to streamline asset distribution and access in your C++ game or application.
 
 ## How It Works
 The system is split into two components:
