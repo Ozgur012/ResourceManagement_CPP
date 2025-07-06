@@ -6,5 +6,5 @@
     "output_dir_debug": "F:/Projects/Cpp/ResourceManagement_cxx/build/Ninja Multi/Example_Raylib/Debug",
     "output_dir_release": "F:/Projects/Cpp/ResourceManagement_cxx/build/Ninja Multi/Example_Raylib/Release",
     "output_sub_dir": "data",
-    "encryption_key" : "ioaosdjo"
+    "encryption_key" : "my-encryption_key"
 }
