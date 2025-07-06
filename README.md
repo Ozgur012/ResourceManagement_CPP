@@ -28,7 +28,7 @@ This lets you manage and load multiple independent resource packs as needed, giv
         "encryption_key" : "my-encryption_key123456789"
     }
 
-### CLI command for packing
+### CLI command for packing (open command prompt, navigate to rp.exe directory)
     rp.exe --pack c:\path\to\my\resource_config.json
 
 ### Suported file types
