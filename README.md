@@ -7,7 +7,7 @@
         },
         "output_dir_debug": "C:/MyProjects/AwesomeGame/build/Example/Debug",
         "output_dir_release": "C:/MyProjects/AwesomeGame/build/Example/Release",
-        "output_sub_dir": "data",
+        "output_sub_dir": "my_sub_directory",
         "encryption_key" : "my-encryption_key"
     }
 
