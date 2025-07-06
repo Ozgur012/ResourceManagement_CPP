@@ -1,5 +1,17 @@
 # ResourceManagement_CPP
 
+    {
+        "input_targets" : {
+            "res_pack1" : "C:/MyProjects/AwesomeGame/Assets/pack1",
+            "res_pack2" : "C:/MyProjects/AwesomeGame/Assets/pack1"
+        },
+        "output_dir_debug": "C:/MyProjects/AwesomeGame/build/Example/Debug",
+        "output_dir_release": "C:/MyProjects/AwesomeGame/build/Example/Release",
+        "output_sub_dir": "data",
+        "encryption_key" : "my-encryption_key"
+    }
+
+
 ## Example
 
     include <iostream>
