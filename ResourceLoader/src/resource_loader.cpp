@@ -118,7 +118,7 @@ namespace rm::rLdr
             if (access_path != _entry_name)
             {
                 pb.pack_file.seekg(_end_point, std::ios::cur);
-                std::cout << priv::name << "Invalid access path: " << access_path << '\n';
+                
                 continue;
             }
 
@@ -138,6 +138,10 @@ namespace rm::rLdr
             }
 
             break;
+        }
+        if (output_data.empty())
+        {
+            std::cout << priv::name << "ERROR: Invalid access path: " << access_path << '\n';
         }
         return output_data;
     }
