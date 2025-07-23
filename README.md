@@ -35,7 +35,7 @@ This lets you manage and load multiple independent resource packs as needed, giv
 
     .png, .jpg, .jpeg, .ogg, .wav, .mp3
 
-## Example
+## Example using raylib.
 
     #include "raylib.h"
     #include "resource_loader.hpp"
